@@ -29,6 +29,13 @@
       "when": 1732359639603,
       "tag": "0003_petite_ikaris",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1732376874371,
+      "tag": "0004_wooden_rockslide",
+      "breakpoints": true
     }
   ]
 }

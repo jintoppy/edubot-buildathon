@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { users, counselorProfiles } from '@/lib/db/schema';
+import { users, counselorProfiles, counselorInvitations } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 export async function POST(req: Request) {
   try {
@@ -28,6 +29,12 @@ export async function POST(req: Request) {
           biography,
           availability: {}, // Default empty availability
         });
+
+      await tx.update(counselorInvitations)
+        .set({
+          status: 'accepted'
+        })
+        .where(eq(counselorInvitations.id, user.id))
     });
 
     return NextResponse.json({ success: true });

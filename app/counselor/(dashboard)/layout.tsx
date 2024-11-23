@@ -20,31 +20,7 @@ const routes = [
     icon: LayoutDashboard,
     href: '/admin',
     color: "text-sky-500"
-  },
-  {
-    label: 'Program Management',
-    icon: Video,
-    href: '/admin/program-management',
-    color: "text-violet-500",
-  },
-  {
-    label: 'Analytics',
-    icon: Video,
-    href: '/admin/analytics',
-    color: "text-violet-500",
-  },
-  {
-    label: 'Conversations',
-    icon: Video,
-    href: '/admin/conversations',
-    color: "text-violet-500",
-  },
-  {
-    label: 'Settings',
-    icon: Video,
-    href: '/admin/settings',
-    color: "text-violet-500",
-  },
+  }, 
 ]
 
 export default function DashboardLayout({

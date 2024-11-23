@@ -34,6 +34,13 @@ export const messageTypeEnum = pgEnum("message_type", [
   "action_item"       // Tasks/actions for the user
 ]);
 
+export const assignmentStatusEnum = pgEnum("assignment_status", [
+  "open",
+  "assigned",
+  "in_progress",
+  "completed"
+]);
+
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   clerkId: text("clerk_id").notNull().unique(),
@@ -144,6 +151,31 @@ export const counselorInvitations = pgTable("counselor_invitations", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const counselorAssignments = pgTable("counselor_assignments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // References to other tables
+  studentId: uuid("student_id").references(() => users.id).notNull(),
+  counselorId: uuid("counselor_id").references(() => users.id),  // Optional field
+  programId: uuid("program_id").references(() => programs.id),   // Optional field
+  conversationId: uuid("conversation_id").references(() => chatSessions.id).notNull(),
+  
+  // Assignment status
+  status: assignmentStatusEnum("status").notNull().default("open"),
+  
+  // Additional useful fields
+  notes: text("notes"),                    // For any specific notes about the assignment
+  priority: text("priority"),              // To mark priority level if needed
+  metadata: jsonb("metadata"),             // For any additional data
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  assignedAt: timestamp("assigned_at"),    // When counselor was assigned
+  completedAt: timestamp("completed_at"),  // When assignment was completed
+});
+
+export type AssignmentStatus = typeof assignmentStatusEnum.enumValues;
 export type CommunicationMode = typeof communicationModeEnum.enumValues;
 export type SessionCategory = typeof sessionCategoryEnum.enumValues;
 export type MessageType = typeof messageTypeEnum.enumValues;

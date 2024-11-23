@@ -13,7 +13,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^1.0.4",
     "@clerk/backend": "^1.18.0",
-    "@clerk/nextjs": "^6.4.1",
+    "@clerk/nextjs": "^6.5.0",
     "@hookform/resolvers": "^3.9.1",
     "@langchain/community": "^0.3.15",
     "@langchain/core": "^0.3.18",
@@ -46,6 +46,7 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
+    "@tanstack/react-table": "^8.20.5",
     "@vercel/analytics": "^1.2.2",
     "ai": "^4.0.3",
     "class-variance-authority": "^0.7.0",
