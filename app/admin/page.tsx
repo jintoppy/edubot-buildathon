@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 interface StatCardProps {
   title: string;
@@ -114,16 +115,49 @@ const SystemHealth: React.FC = () => {
 
 const InviteCounselorDialog: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement counselor invite logic
-    console.log('Inviting counselor:', email);
-    setEmail('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/counselors/invite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send invitation');
+      }
+
+      toast({
+        title: "Success",
+        description: "Invitation sent successfully",
+      });
+      
+      setEmail('');
+      setOpen(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to send invitation",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">Invite Counselor</Button>
       </DialogTrigger>
@@ -143,7 +177,9 @@ const InviteCounselorDialog: React.FC = () => {
               required
             />
           </div>
-          <Button type="submit">Send Invitation</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Sending..." : "Send Invitation"}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
