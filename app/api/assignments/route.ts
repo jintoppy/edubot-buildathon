@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { isNull } from "drizzle-orm";
+import { isNull, eq } from "drizzle-orm";
 import { counselorAssignments, users, programs, chatSessions } from "@/lib/db/schema";
 import { checkAuth } from "@/lib/checkAuth";
 
