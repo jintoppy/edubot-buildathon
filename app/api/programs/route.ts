@@ -5,10 +5,13 @@ import { db } from "@/lib/db";
 import { studentProfiles, programs, chatSessions } from "@/lib/db/schema";
 
 export async function GET(req: Request) {
+  console.log('inside programs');
   const authResult = await checkAuth();
+  console.log(authResult);
   if (authResult.error || !authResult.user) {
     return NextResponse.json(authResult, { status: authResult.status });
   }
+
 
   const { searchParams } = new URL(req.url);
   const country = searchParams.get("country");
@@ -19,9 +22,11 @@ export async function GET(req: Request) {
   if (country) conditions.push(eq(programs.country, country));
   if (level) conditions.push(eq(programs.level, level));
 
-  const query = db.select().from(programs).where(and(...conditions));
+  // const query = db.select().from(programs).where(and(...conditions));
+  const query = db.select()
 
   const results = await query;
+  console.log(results);
   return NextResponse.json(results);
 }
 

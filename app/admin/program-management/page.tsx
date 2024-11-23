@@ -55,7 +55,15 @@ const ProgramsManagement: React.FC = () => {
           throw new Error('Failed to fetch programs');
         }
         const data = await response.json();
-        setPrograms(data);
+        console.log(data);
+        if(Array.isArray(data)){
+          setPrograms(data);
+        }
+        else {
+          setPrograms([]);
+        }
+        
+        
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
