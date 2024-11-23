@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DashboardShell } from '@/components/dashboard/shell';
 import { DashboardHeader } from '@/components/dashboard/header';
 import { Button } from '@/components/ui/button';
@@ -128,15 +128,6 @@ const ProgramsManagement: React.FC = () => {
 
   const handleBulkUpload = (): void => {
     // Implement bulk upload functionality
-  };
-
-  const handleAddProgram = (): void => {
-    // Implement add program functionality
-  };
-
-  const handleEditProgram = (programId: number): void => {
-    // Implement edit program functionality
-    console.log('Editing program:', programId);
   };
 
   return (
