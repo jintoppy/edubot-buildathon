@@ -79,7 +79,7 @@ export function ConversationDetails({ conversation }: ConversationDetailsProps) 
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-200px)] pr-4">
+    
       <div className="space-y-6">
         {/* Header Information */}
         <div className="space-y-4">
@@ -116,6 +116,33 @@ export function ConversationDetails({ conversation }: ConversationDetailsProps) 
           )}
         </div>
 
+        {/* Conversation Timeline */}
+        <div className="space-y-4 mt-6">
+          <h4 className="text-sm font-semibold">Conversation Timeline</h4>
+          <div className="flex items-center gap-6 mt-3">
+            <div className="flex items-center space-x-4">
+              <div className="w-2 h-2 rounded-full bg-blue-500" />
+              <div>
+                <p className="text-sm">Started conversation</p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(conversation.startTime).toLocaleString()}
+                </p>
+              </div>
+            </div>
+            {conversation.endTime && (
+              <div className="flex items-center space-x-4">
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <div>
+                  <p className="text-sm">Ended conversation</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(conversation.endTime).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <ScrollArea className="h-[calc(100vh-200px)] pr-4">
         {/* Chat Messages */}
         <div className="mt-6">
           <h4 className="text-sm font-semibold mb-4">Conversation History</h4>
@@ -161,33 +188,8 @@ export function ConversationDetails({ conversation }: ConversationDetailsProps) 
           </div>
         </div>
 
-        {/* Conversation Timeline */}
-        <div className="space-y-4 mt-6">
-          <h4 className="text-sm font-semibold">Conversation Timeline</h4>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <div className="w-2 h-2 rounded-full bg-blue-500" />
-              <div>
-                <p className="text-sm">Started conversation</p>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(conversation.startTime).toLocaleString()}
-                </p>
-              </div>
-            </div>
-            {conversation.endTime && (
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 rounded-full bg-green-500" />
-                <div>
-                  <p className="text-sm">Ended conversation</p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(conversation.endTime).toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        </ScrollArea>
       </div>
-    </ScrollArea>
+    
   )
 }

@@ -6,18 +6,25 @@ import { checkAuth } from "@/lib/checkAuth";
 
 export async function GET(
   req: Request,
-  { params }: { params: { conversationId: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const authResult = await checkAuth();
   if (authResult.error || !authResult.user) {
     return NextResponse.json(authResult, { status: 401 });
   }
+  const conversationId = (await params).id;
+
+  if(!conversationId){
+    return NextResponse.json({error: 'No Conversation found'}, { status: 404 });
+  }
+
+  console.log('conversationId', conversationId);
 
   try {
     const messages = await db
       .select()
       .from(chatMessages)
-      .where(eq(chatMessages.sessionId, params.conversationId))
+      .where(eq(chatMessages.sessionId, conversationId))
       .orderBy(chatMessages.timestamp);
 
     return NextResponse.json(messages);

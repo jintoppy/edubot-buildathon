@@ -34,6 +34,12 @@ const routes = [
     color: "text-violet-500",
   },
   {
+    label: 'Conversations',
+    icon: Video,
+    href: '/admin/conversations',
+    color: "text-violet-500",
+  },
+  {
     label: 'Settings',
     icon: Video,
     href: '/admin/settings',
