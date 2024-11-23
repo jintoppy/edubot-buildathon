@@ -1,30 +1,21 @@
 import { DashboardShell } from "@/components/dashboard/shell";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { AssignmentsTabs } from "@/components/counselor/assignments-tabs";
-import { auth } from "@clerk/nextjs";
 
 async function getOpenAssignments() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/assignments?status=open`, {
-    cache: 'no-store',
-  });
+  console.log('url', process.env.NEXT_PUBLIC_APP_URL);
+  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/assignments?status=open`);
   if (!response.ok) throw new Error('Failed to fetch open assignments');
   return response.json();
 }
 
 async function getCounselorAssignments() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/assignments/counselor`, {
-    cache: 'no-store',
-  });
+  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/assignments/counselor`);
   if (!response.ok) throw new Error('Failed to fetch counselor assignments');
   return response.json();
 }
 
 export default async function CounselorDashboardHomePage() {
-  const { userId } = auth();
-  
-  if (!userId) {
-    return null;
-  }
 
   try {
     const [openAssignments, myAssignments] = await Promise.all([
