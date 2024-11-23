@@ -244,6 +244,45 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
               </div>
             </div>
 
+            {/* Professional Requirements */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Professional Requirements</h3>
+              
+              {/* Work Experience */}
+              <div className="space-y-2">
+                <Label>Work Experience</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Years Required</Label>
+                    <Input
+                      type="number"
+                      {...form.register("eligibilityCriteria.professional.workExperience.yearsRequired", { valueAsNumber: true })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label>Is Compulsory</Label>
+                      <Switch 
+                        checked={form.watch("eligibilityCriteria.professional.workExperience.isCompulsory")}
+                        onCheckedChange={(checked) => 
+                          form.setValue("eligibilityCriteria.professional.workExperience.isCompulsory", checked)
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Certifications */}
+              <div className="space-y-2">
+                <Label>Required Certifications</Label>
+                <Input
+                  placeholder="Add certification requirements"
+                  {...form.register("eligibilityCriteria.professional.certifications.0.name")}
+                />
+              </div>
+            </div>
+
             {/* Language Requirements */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Language Requirements</h3>
@@ -293,6 +332,196 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
                     />
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Standardized Tests */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Standardized Tests</h3>
+              
+              {/* GRE */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label>GRE Required</Label>
+                  <Switch 
+                    checked={form.watch("eligibilityCriteria.standardizedTests.GRE.required")}
+                    onCheckedChange={(checked) => 
+                      form.setValue("eligibilityCriteria.standardizedTests.GRE.required", checked)
+                    }
+                  />
+                </div>
+                
+                {form.watch("eligibilityCriteria.standardizedTests.GRE.required") && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Verbal Score</Label>
+                      <Input
+                        type="number"
+                        {...form.register("eligibilityCriteria.standardizedTests.GRE.minimumScores.verbal", { valueAsNumber: true })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Quantitative Score</Label>
+                      <Input
+                        type="number"
+                        {...form.register("eligibilityCriteria.standardizedTests.GRE.minimumScores.quantitative", { valueAsNumber: true })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Analytical Writing</Label>
+                      <Input
+                        type="number"
+                        step="0.5"
+                        {...form.register("eligibilityCriteria.standardizedTests.GRE.minimumScores.analyticalWriting", { valueAsNumber: true })}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* GMAT */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label>GMAT Required</Label>
+                  <Switch 
+                    checked={form.watch("eligibilityCriteria.standardizedTests.GMAT.required")}
+                    onCheckedChange={(checked) => 
+                      form.setValue("eligibilityCriteria.standardizedTests.GMAT.required", checked)
+                    }
+                  />
+                </div>
+                
+                {form.watch("eligibilityCriteria.standardizedTests.GMAT.required") && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Total Score</Label>
+                      <Input
+                        type="number"
+                        {...form.register("eligibilityCriteria.standardizedTests.GMAT.minimumScores.total", { valueAsNumber: true })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Quantitative Score</Label>
+                      <Input
+                        type="number"
+                        {...form.register("eligibilityCriteria.standardizedTests.GMAT.minimumScores.quantitative", { valueAsNumber: true })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Verbal Score</Label>
+                      <Input
+                        type="number"
+                        {...form.register("eligibilityCriteria.standardizedTests.GMAT.minimumScores.verbal", { valueAsNumber: true })}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Additional Requirements */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Additional Requirements</h3>
+              
+              {/* Financial Requirements */}
+              <div className="space-y-4">
+                <Label>Financial Requirements</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Minimum Amount</Label>
+                    <Input
+                      type="number"
+                      {...form.register("eligibilityCriteria.additional.financialRequirements.minimumAmount", { valueAsNumber: true })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Currency</Label>
+                    <Select
+                      value={form.watch("eligibilityCriteria.additional.financialRequirements.currency")}
+                      onValueChange={(value) => 
+                        form.setValue("eligibilityCriteria.additional.financialRequirements.currency", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select currency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="USD">USD</SelectItem>
+                        <SelectItem value="EUR">EUR</SelectItem>
+                        <SelectItem value="GBP">GBP</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recommendation Letters */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label>Recommendation Letters Required</Label>
+                  <Switch 
+                    checked={form.watch("eligibilityCriteria.additional.recommendationLetters.required")}
+                    onCheckedChange={(checked) => 
+                      form.setValue("eligibilityCriteria.additional.recommendationLetters.required", checked)
+                    }
+                  />
+                </div>
+                
+                {form.watch("eligibilityCriteria.additional.recommendationLetters.required") && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Academic Letters</Label>
+                      <Input
+                        type="number"
+                        {...form.register("eligibilityCriteria.additional.recommendationLetters.academic", { valueAsNumber: true })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Professional Letters</Label>
+                      <Input
+                        type="number"
+                        {...form.register("eligibilityCriteria.additional.recommendationLetters.professional", { valueAsNumber: true })}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Special Conditions */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Special Conditions</h3>
+              
+              {/* Country Specific Requirements */}
+              <div className="space-y-2">
+                <Label>Country Specific Requirements</Label>
+                <Textarea
+                  placeholder="Enter any country-specific requirements..."
+                  {...form.register("eligibilityCriteria.specialConditions.countrySpecificRequirements.0.additionalDocuments")}
+                />
+              </div>
+
+              {/* Scholarship Eligibility */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label>Scholarship Available</Label>
+                  <Switch 
+                    checked={form.watch("eligibilityCriteria.specialConditions.scholarshipEligibility.0.available")}
+                    onCheckedChange={(checked) => 
+                      form.setValue("eligibilityCriteria.specialConditions.scholarshipEligibility.0.available", checked)
+                    }
+                  />
+                </div>
+                
+                {form.watch("eligibilityCriteria.specialConditions.scholarshipEligibility.0.available") && (
+                  <div className="space-y-2">
+                    <Label>Scholarship Criteria</Label>
+                    <Textarea
+                      placeholder="Enter scholarship eligibility criteria..."
+                      {...form.register("eligibilityCriteria.specialConditions.scholarshipEligibility.0.criteria")}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
