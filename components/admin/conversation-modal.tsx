@@ -5,6 +5,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 
+interface Message {
+  id: string
+  content: string
+  messageType: string
+  timestamp: string
+  userId: string
+}
+
 interface ConversationModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -25,6 +33,24 @@ interface ConversationModalProps {
 }
 
 export function ConversationModal({ open, onOpenChange, conversation }: ConversationModalProps) {
+  const [messages, setMessages] = React.useState<Message[]>([])
+
+  React.useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch(`/api/conversations/${conversation.id}/messages`)
+        if (!response.ok) throw new Error('Failed to fetch messages')
+        const data = await response.json()
+        setMessages(data)
+      } catch (error) {
+        console.error('Error fetching messages:', error)
+      }
+    }
+
+    if (conversation.id) {
+      fetchMessages()
+    }
+  }, [conversation.id])
   const duration = conversation.endTime 
     ? new Date(conversation.endTime).getTime() - new Date(conversation.startTime).getTime()
     : null;
@@ -81,8 +107,36 @@ export function ConversationModal({ open, onOpenChange, conversation }: Conversa
               )}
             </div>
 
+            {/* Chat Messages */}
+            <div className="space-y-4 mt-6">
+              <h4 className="text-sm font-semibold">Conversation History</h4>
+              <div className="space-y-4">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${
+                      message.messageType === 'user_message' ? 'justify-end' : 'justify-start'
+                    }`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                        message.messageType === 'user_message'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted'
+                      }`}
+                    >
+                      <p className="text-sm">{message.content}</p>
+                      <p className="text-xs mt-1 opacity-70">
+                        {new Date(message.timestamp).toLocaleTimeString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Conversation Timeline */}
-            <div className="space-y-4">
+            <div className="space-y-4 mt-6">
               <h4 className="text-sm font-semibold">Conversation Timeline</h4>
               <div className="space-y-4">
                 <div className="flex items-center space-x-4">
