@@ -13,18 +13,12 @@ interface Assignment {
   id: string;
   createdAt: Date;
   status: string;
-  user: {
-    fullName: string;
-    email: string;
-  };
-  program?: {
-    name: string;
-    level: string;
-  };
-  chatSession: {
-    summary: string | null;
-    startTime: Date;
-  };
+  userFullName: string;
+  userEmail: string;
+  programName?: string;
+  programLevel?: string;
+  chatSessionSummary: string | null;
+  chatSessionStartTime: Date;
 }
 
 interface AssignmentsTableProps {
@@ -46,10 +40,10 @@ export function AssignmentsTable({ assignments }: AssignmentsTableProps) {
       <TableBody>
         {assignments.map((assignment) => (
           <TableRow key={assignment.id}>
-            <TableCell>{assignment.user.fullName}</TableCell>
-            <TableCell>{assignment.program?.name || "N/A"}</TableCell>
+            <TableCell>{assignment.userFullName}</TableCell>
+            <TableCell>{assignment.programName || "N/A"}</TableCell>
             <TableCell>{formatDate(assignment.createdAt)}</TableCell>
-            <TableCell>{assignment.chatSession.summary || "No summary available"}</TableCell>
+            <TableCell>{assignment.chatSessionSummary || "No summary available"}</TableCell>
             <TableCell>
               <Button variant="outline" size="sm">
                 View Details

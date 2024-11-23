@@ -23,18 +23,12 @@ export async function GET(req: Request) {
         id: counselorAssignments.id,
         createdAt: counselorAssignments.createdAt,
         status: counselorAssignments.status,
-        user: {
-          fullName: users.fullName,
-          email: users.email,
-        },
-        program: {
-          name: programs.name,
-          level: programs.level,
-        },
-        chatSession: {
-          summary: chatSessions.summary,
-          startTime: chatSessions.startTime,
-        },
+        userFullName: users.fullName,
+        userEmail: users.email,
+        programName: programs.name,
+        programLevel: programs.level,
+        chatSessionSummary: chatSessions.summary,
+        chatSessionStartTime: chatSessions.startTime,
       })
       .from(counselorAssignments)
       .leftJoin(users, eq(counselorAssignments.studentId, users.id))
