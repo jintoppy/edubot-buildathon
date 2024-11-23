@@ -27,16 +27,46 @@ interface EditProgramModalProps {
 
 export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
   const [open, setOpen] = React.useState(false)
-  const [formData, setFormData] = React.useState({
-    name: program.name,
-    level: program.level,
-    duration: program.duration,
-    tuitionFee: program.tuitionFee.toString(),
-    currency: program.currency,
-    country: program.country,
-    description: program.description || '',
-    eligibilityCriteria: program.eligibilityCriteria || {}
-  })
+  const form = useForm<ProgramFormValues>({
+    resolver: zodResolver(programFormSchema),
+    defaultValues: {
+      name: program.name,
+      level: program.level as "bachelors" | "masters" | "phd",
+      duration: program.duration,
+      tuitionFee: program.tuitionFee,
+      currency: program.currency as "USD" | "EUR" | "GBP",
+      country: program.country,
+      description: program.description || '',
+      eligibilityCriteria: program.eligibilityCriteria || {
+        academic: {
+          minimumEducationLevel: {
+            level: '',
+            requiredStream: [],
+            specificMajors: []
+          },
+          minimumGPA: {
+            score: 0,
+            maxScale: 4,
+            convertedPercentage: 0
+          },
+          requiredSubjects: []
+        },
+        language: {
+          acceptedTests: {
+            IELTS: {
+              overallScore: 6.5,
+              minimumScores: {
+                reading: 6,
+                writing: 6,
+                speaking: 6,
+                listening: 6
+              }
+            }
+          }
+        }
+      }
+    }
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

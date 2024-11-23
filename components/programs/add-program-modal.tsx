@@ -9,22 +9,56 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Plus } from 'lucide-react'
 
+import { programFormSchema, ProgramFormValues } from "./program-types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
 interface AddProgramModalProps {
-  onSubmit: (programData: any) => Promise<void>
+  onSubmit: (programData: ProgramFormValues) => Promise<void>
 }
 
 export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
   const [open, setOpen] = React.useState(false)
-  const [formData, setFormData] = React.useState({
-    name: '',
-    level: '',
-    duration: '',
-    tuitionFee: '',
-    currency: 'USD',
-    country: '',
-    description: '',
-    eligibilityCriteria: {}
-  })
+  const form = useForm<ProgramFormValues>({
+    resolver: zodResolver(programFormSchema),
+    defaultValues: {
+      name: '',
+      level: 'bachelors',
+      duration: '',
+      tuitionFee: 0,
+      currency: 'USD',
+      country: '',
+      description: '',
+      eligibilityCriteria: {
+        academic: {
+          minimumEducationLevel: {
+            level: '',
+            requiredStream: [],
+            specificMajors: []
+          },
+          minimumGPA: {
+            score: 0,
+            maxScale: 4,
+            convertedPercentage: 0
+          },
+          requiredSubjects: []
+        },
+        language: {
+          acceptedTests: {
+            IELTS: {
+              overallScore: 6.5,
+              minimumScores: {
+                reading: 6,
+                writing: 6,
+                speaking: 6,
+                listening: 6
+              }
+            }
+          }
+        }
+      }
+    }
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
