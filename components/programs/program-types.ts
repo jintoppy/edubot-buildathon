@@ -31,10 +31,10 @@ export const programFormSchema = z.object({
         IELTS: z.object({
           overallScore: z.number().optional(),
           minimumScores: z.object({
-            reading: z.number().nullable().optional(),
-            writing: z.number().nullable().optional(),
-            speaking: z.number().nullable().optional(),
-            listening: z.number().nullable().optional()
+            reading: z.preprocess((val) => (val === '' || isNaN(Number(val)) ? null : Number(val)), z.number().nullable()),
+            writing: z.preprocess((val) => (val === '' || isNaN(Number(val)) ? null : Number(val)), z.number().nullable()),
+            speaking: z.preprocess((val) => (val === '' || isNaN(Number(val)) ? null : Number(val)), z.number().nullable()),
+            listening: z.preprocess((val) => (val === '' || isNaN(Number(val)) ? null : Number(val)), z.number().nullable())
           }).nullable().optional()
         }).optional(),
         TOEFL: z.object({

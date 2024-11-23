@@ -311,7 +311,9 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
                     <Input
                       type="number"
                       step="0.5"
-                      {...form.register("eligibilityCriteria.language.acceptedTests.IELTS.minimumScores.reading", { valueAsNumber: true })}
+                      {...form.register("eligibilityCriteria.language.acceptedTests.IELTS.minimumScores.reading", {
+                        setValueAs: (v) => (v === "" ? null : parseFloat(v))
+                      })}
                     />
                   </div>
                   <div className="space-y-2">
