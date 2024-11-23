@@ -55,6 +55,56 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
               }
             }
           }
+        },
+        professional: {
+          workExperience: {
+            yearsRequired: 0,
+            isCompulsory: false,
+            relevantFieldsOnly: true,
+            acceptedFields: []
+          },
+          certifications: []
+        },
+        standardizedTests: {
+          GRE: {
+            required: false,
+            minimumScores: {
+              verbal: 150,
+              quantitative: 150,
+              analyticalWriting: 3.5,
+              total: 300
+            }
+          },
+          GMAT: {
+            required: false,
+            minimumScores: {
+              verbal: 0,
+              quantitative: 0,
+              analyticalWriting: 0,
+              integratedReasoning: 0,
+              total: 0
+            }
+          },
+          subjectTests: []
+        },
+        additional: {
+          financialRequirements: {
+            proofOfFunds: true,
+            minimumAmount: 0,
+            currency: 'USD',
+            durationInMonths: 12
+          },
+          recommendationLetters: {
+            required: false,
+            minimum: 0,
+            academic: 0,
+            professional: 0
+          }
+        },
+        specialConditions: {
+          countrySpecificRequirements: [],
+          quotaReservations: [],
+          scholarshipEligibility: []
         }
       }
     }

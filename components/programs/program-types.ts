@@ -47,7 +47,91 @@ export const programFormSchema = z.object({
           })
         }).optional()
       })
-    })
+    }),
+    professional: z.object({
+      workExperience: z.object({
+        yearsRequired: z.number(),
+        isCompulsory: z.boolean(),
+        relevantFieldsOnly: z.boolean(),
+        acceptedFields: z.array(z.string()).optional()
+      }),
+      certifications: z.array(z.object({
+        name: z.string(),
+        isCompulsory: z.boolean(),
+        alternativesAccepted: z.array(z.string())
+      }))
+    }).optional(),
+    standardizedTests: z.object({
+      GRE: z.object({
+        required: z.boolean(),
+        minimumScores: z.object({
+          verbal: z.number(),
+          quantitative: z.number(),
+          analyticalWriting: z.number(),
+          total: z.number().optional()
+        })
+      }).optional(),
+      GMAT: z.object({
+        required: z.boolean(),
+        minimumScores: z.object({
+          verbal: z.number(),
+          quantitative: z.number(),
+          analyticalWriting: z.number(),
+          integratedReasoning: z.number(),
+          total: z.number()
+        })
+      }).optional(),
+      subjectTests: z.array(z.object({
+        testName: z.string(),
+        minimumScore: z.number(),
+        isCompulsory: z.boolean()
+      })).optional()
+    }).optional(),
+    additional: z.object({
+      ageLimit: z.object({
+        minimum: z.number(),
+        maximum: z.number().optional()
+      }).optional(),
+      financialRequirements: z.object({
+        proofOfFunds: z.boolean(),
+        minimumAmount: z.number(),
+        currency: z.string(),
+        durationInMonths: z.number()
+      }),
+      portfolioRequirements: z.object({
+        required: z.boolean(),
+        type: z.array(z.string()),
+        minimumItems: z.number()
+      }).optional(),
+      interviewRequired: z.object({
+        required: z.boolean(),
+        type: z.string()
+      }).optional(),
+      recommendationLetters: z.object({
+        required: z.boolean(),
+        minimum: z.number(),
+        academic: z.number(),
+        professional: z.number()
+      }).optional()
+    }).optional(),
+    specialConditions: z.object({
+      countrySpecificRequirements: z.array(z.object({
+        country: z.string(),
+        additionalDocuments: z.array(z.string()),
+        specialConditions: z.array(z.string())
+      })).optional(),
+      quotaReservations: z.array(z.object({
+        category: z.string(),
+        percentageReserved: z.number(),
+        specialCriteria: z.array(z.string())
+      })).optional(),
+      scholarshipEligibility: z.array(z.object({
+        available: z.boolean(),
+        criteria: z.array(z.string()),
+        amount: z.number().optional(),
+        currency: z.string().optional()
+      })).optional()
+    }).optional()
   }).optional()
 });
 
