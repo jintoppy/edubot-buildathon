@@ -34,6 +34,12 @@ const routes = [
     color: "text-pink-700",
   },
   {
+    label: 'My Conversations',
+    icon: GraduationCap,
+    href: '/conversations',
+    color: "text-pink-700",
+  },
+  {
     label: 'Profile',
     icon: UserCircle,
     href: '/profile',
