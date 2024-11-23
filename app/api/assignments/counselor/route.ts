@@ -14,9 +14,27 @@ export async function GET(req: Request) {
     const assignments = await db.query.counselorAssignments.findMany({
       where: eq(counselorAssignments.counselorId, authResult.user.id),
       with: {
-        users: true,
-        programs: true,
-        chatSessions: true,
+        student: {
+          columns: {
+            id: true,
+            fullName: true,
+            email: true
+          }
+        },
+        program: {
+          columns: {
+            id: true,
+            name: true,
+            level: true
+          }
+        },
+        conversation: {
+          columns: {
+            id: true,
+            summary: true,
+            startTime: true
+          }
+        }
       },
     });
 
