@@ -73,9 +73,17 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
   });
 
   const handleSubmit = async (data: ProgramFormValues) => {
-    await onSubmit(program.id, data)
-    setOpen(false)
-    form.reset()
+    try {
+      await onSubmit(program.id, data);
+      setOpen(false);
+      form.reset();
+    } catch (error) {
+      console.error('Failed to update program:', error);
+    }
+  }
+
+  const onError = (errors: any) => {
+    console.error('Form validation errors:', errors);
   }
 
   return (
@@ -87,7 +95,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
         <DialogHeader>
           <DialogTitle>Edit Program</DialogTitle>
         </DialogHeader>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(handleSubmit, onError)} className="space-y-4">
           <div className="space-y-6">
             {/* Basic Information */}
             <div className="grid grid-cols-2 gap-4">
