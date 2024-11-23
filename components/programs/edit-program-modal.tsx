@@ -236,7 +236,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                     <div className="flex items-center justify-between">
                       <Label>Is Compulsory</Label>
                       <Switch 
-                        checked={form.watch("eligibilityCriteria.professional.workExperience.isCompulsory")}
+                        checked={form.watch("eligibilityCriteria.professional.workExperience.isCompulsory") ?? false}
                         onCheckedChange={(checked: boolean) => 
                           form.setValue("eligibilityCriteria.professional.workExperience.isCompulsory", checked)
                         }
@@ -317,7 +317,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                 <div className="flex items-center justify-between">
                   <Label>GRE Required</Label>
                   <Switch 
-                    checked={form.watch("eligibilityCriteria.standardizedTests.GRE.required")}
+                    checked={form.watch("eligibilityCriteria.standardizedTests.GRE.required") ?? false}
                     onCheckedChange={(checked) => 
                       form.setValue("eligibilityCriteria.standardizedTests.GRE.required", checked)
                     }
@@ -357,7 +357,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                 <div className="flex items-center justify-between">
                   <Label>GMAT Required</Label>
                   <Switch 
-                    checked={form.watch("eligibilityCriteria.standardizedTests.GMAT.required")}
+                    checked={form.watch("eligibilityCriteria.standardizedTests.GMAT.required") ?? false}
                     onCheckedChange={(checked) => 
                       form.setValue("eligibilityCriteria.standardizedTests.GMAT.required", checked)
                     }
@@ -433,7 +433,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                 <div className="flex items-center justify-between">
                   <Label>Recommendation Letters Required</Label>
                   <Switch 
-                    checked={form.watch("eligibilityCriteria.additional.recommendationLetters.required")}
+                    checked={form.watch("eligibilityCriteria.additional.recommendationLetters.required") ?? false}
                     onCheckedChange={(checked: boolean) => 
                       form.setValue("eligibilityCriteria.additional.recommendationLetters.required", checked)
                     }
@@ -479,7 +479,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                 <div className="flex items-center justify-between">
                   <Label>Scholarship Available</Label>
                   <Switch 
-                    checked={form.watch("eligibilityCriteria.specialConditions.scholarshipEligibility.0.available")}
+                    checked={form.watch("eligibilityCriteria.specialConditions.scholarshipEligibility.0.available") ?? false}
                     onCheckedChange={(checked) => 
                       form.setValue("eligibilityCriteria.specialConditions.scholarshipEligibility.0.available", checked)
                     }
