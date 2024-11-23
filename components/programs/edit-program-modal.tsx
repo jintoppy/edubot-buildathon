@@ -11,18 +11,7 @@ import { programFormSchema, ProgramFormValues } from "./program-types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Switch } from '../ui/switch'
-
-interface Program {
-  id: string;
-  name: string;
-  level: string;
-  duration: string;
-  tuitionFee: number;
-  currency: string;
-  country: string;
-  description: string;
-  eligibilityCriteria: any;
-}
+import { Program } from '@/app/admin/program-management/page'
 
 interface EditProgramModalProps {
   program: Program;

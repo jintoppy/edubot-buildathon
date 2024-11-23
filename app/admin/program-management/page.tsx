@@ -10,11 +10,11 @@ import { Upload, Search } from 'lucide-react';
 import { AddProgramModal } from '@/components/programs/add-program-modal';
 import { EditProgramModal } from '@/components/programs/edit-program-modal';
 
-import { programFormSchema, ProgramFormValues } from "./program-types";
+import { programFormSchema, ProgramFormValues } from "@/components/programs/program-types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-interface Program extends ProgramFormValues {
+export interface Program extends ProgramFormValues {
   id: string;
   universityId: string;
   isActive: boolean;

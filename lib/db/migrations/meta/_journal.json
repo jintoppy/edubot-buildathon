@@ -15,6 +15,20 @@
       "when": 1732349621272,
       "tag": "0001_useful_skrulls",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732357509867,
+      "tag": "0002_green_ken_ellis",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1732359639603,
+      "tag": "0003_petite_ikaris",
+      "breakpoints": true
     }
   ]
 }

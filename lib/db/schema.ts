@@ -1,5 +1,11 @@
 import { pgTable, uuid, text, timestamp, jsonb, boolean, real, pgEnum } from "drizzle-orm/pg-core";
 
+export const userRoleEnum = pgEnum("userType", [
+  "admin",
+  "counselor",
+  "student"
+]);
+
 export const communicationModeEnum = pgEnum("communication_mode", [
   "video_only",    // Video and audio enabled
   "audio_only",    // Only audio enabled
@@ -33,7 +39,7 @@ export const users = pgTable("users", {
   clerkId: text("clerk_id").notNull().unique(),
   email: text("email").notNull(),
   fullName: text("full_name").notNull(),
-  role: text("role").notNull().default("student"),
+  role: userRoleEnum("userType").notNull().default("student"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -101,10 +107,6 @@ export const chatSessions = pgTable("chat_sessions", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export type CommunicationMode = typeof communicationModeEnum.enumValues;
-export type SessionCategory = typeof sessionCategoryEnum.enumValues;
-export type MessageType = typeof messageTypeEnum.enumValues;
-
 export const chatMessages = pgTable("chat_messages", {
   id: uuid("id").primaryKey().defaultRandom(),
   sessionId: uuid("session_id").references(() => chatSessions.id),
@@ -118,3 +120,31 @@ export const chatMessages = pgTable("chat_messages", {
   programReferences: jsonb("program_references").$type<string[]>(), // Store referenced program IDs
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const counselorProfiles = pgTable("counselor_profiles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id),
+  specializations: jsonb("specializations").$type<string[]>(),
+  availability: jsonb("availability"), // Store availability schedule
+  biography: text("biography"),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const counselorInvitations = pgTable("counselor_invitations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),
+  name: text("name"),
+  status: text("status").notNull().default("pending"), // pending, accepted, expired
+  invitedBy: uuid("invited_by").references(() => users.id),
+  clerkInvitationId: text("clerk_invitation_id").notNull().unique(), // Store Clerk's invitation ID
+  clerkId: text("clerk_id"), // Will be populated when invitation is accepted
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type CommunicationMode = typeof communicationModeEnum.enumValues;
+export type SessionCategory = typeof sessionCategoryEnum.enumValues;
+export type MessageType = typeof messageTypeEnum.enumValues;
+export type UserRole = typeof userRoleEnum.enumValues;
