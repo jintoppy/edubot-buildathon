@@ -33,24 +33,40 @@ interface ConversationModalProps {
 }
 
 export function ConversationModal({ open, onOpenChange, conversation }: ConversationModalProps) {
-  const [messages, setMessages] = React.useState<Message[]>([])
+  const [messages, setMessages] = React.useState<Message[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   React.useEffect(() => {
     const fetchMessages = async () => {
+      setLoading(true);
       try {
-        const response = await fetch(`/api/conversations/${conversation.id}/messages`)
-        if (!response.ok) throw new Error('Failed to fetch messages')
-        const data = await response.json()
-        setMessages(data)
+        const response = await fetch(`/api/conversations/${conversation.id}/messages`);
+        if (!response.ok) throw new Error('Failed to fetch messages');
+        const data = await response.json();
+        setMessages(data);
+        setError(null);
       } catch (error) {
-        console.error('Error fetching messages:', error)
+        console.error('Error fetching messages:', error);
+        setError('Failed to load messages');
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
     if (conversation.id) {
-      fetchMessages()
+      fetchMessages();
     }
-  }, [conversation.id])
+  }, [conversation.id]);
+
+  React.useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
   const duration = conversation.endTime 
     ? new Date(conversation.endTime).getTime() - new Date(conversation.startTime).getTime()
     : null;
@@ -108,30 +124,47 @@ export function ConversationModal({ open, onOpenChange, conversation }: Conversa
             </div>
 
             {/* Chat Messages */}
-            <div className="space-y-4 mt-6">
-              <h4 className="text-sm font-semibold">Conversation History</h4>
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${
-                      message.messageType === 'user_message' ? 'justify-end' : 'justify-start'
-                    }`}
-                  >
-                    <div
-                      className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                        message.messageType === 'user_message'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted'
-                      }`}
-                    >
-                      <p className="text-sm">{message.content}</p>
-                      <p className="text-xs mt-1 opacity-70">
-                        {new Date(message.timestamp).toLocaleTimeString()}
-                      </p>
+            <div className="mt-6">
+              <h4 className="text-sm font-semibold mb-4">Conversation History</h4>
+              <div className="border rounded-lg bg-background p-4">
+                <div className="space-y-4 max-h-[400px] overflow-y-auto">
+                  {loading ? (
+                    <div className="flex justify-center items-center h-20">
+                      <p className="text-sm text-muted-foreground">Loading messages...</p>
                     </div>
-                  </div>
-                ))}
+                  ) : error ? (
+                    <div className="flex justify-center items-center h-20">
+                      <p className="text-sm text-red-500">{error}</p>
+                    </div>
+                  ) : messages.length === 0 ? (
+                    <div className="flex justify-center items-center h-20">
+                      <p className="text-sm text-muted-foreground">No messages in this conversation</p>
+                    </div>
+                  ) : (
+                    messages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`flex ${
+                          message.messageType === 'user_message' ? 'justify-end' : 'justify-start'
+                        }`}
+                      >
+                        <div
+                          className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                            message.messageType === 'user_message'
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-muted'
+                          }`}
+                        >
+                          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                          <p className="text-xs mt-1 opacity-70">
+                            {new Date(message.timestamp).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
               </div>
             </div>
 
