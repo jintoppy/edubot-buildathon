@@ -9,23 +9,29 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Plus, Upload, Search } from 'lucide-react';
 
 interface Program {
-  id: number;
+  id: string;
+  universityId: string;
   name: string;
-  university: string;
-  status: 'Active' | 'Inactive' | 'Draft';
-  eligibility: string;
-  lastUpdated: string;
+  level: string;
+  duration: string;
+  tuitionFee: number;
+  currency: string;
+  country: string;
+  eligibilityCriteria: any;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface StatusBadgeProps {
-  status: Program['status'];
+  status: 'Active' | 'Inactive';
 }
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const statusStyles = {
     Active: 'bg-green-50 text-green-700',
     Inactive: 'bg-red-50 text-red-700',
-    Draft: 'bg-yellow-50 text-yellow-700',
   };
 
   return (
@@ -36,24 +42,84 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
 };
 
 const ProgramsManagement: React.FC = () => {
-  const programs: Program[] = [
-    {
-      id: 1,
-      name: 'MS in Computer Science',
-      university: 'Tech University',
-      status: 'Active',
-      eligibility: 'Bachelor\'s in CS/IT, GPA 3.0',
-      lastUpdated: '2024-03-15',
-    },
-    {
-      id: 2,
-      name: 'MBA',
-      university: 'Business School',
-      status: 'Active',
-      eligibility: 'Bachelor\'s degree, 2 years experience',
-      lastUpdated: '2024-03-14',
-    },
-  ];
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const response = await fetch('/api/programs');
+        if (!response.ok) {
+          throw new Error('Failed to fetch programs');
+        }
+        const data = await response.json();
+        setPrograms(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrograms();
+  }, []);
+
+  const handleAddProgram = async () => {
+    // TODO: Implement add program form
+    const newProgram = {
+      // Add form data here
+    };
+
+    try {
+      const response = await fetch('/api/programs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newProgram),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add program');
+      }
+
+      // Refresh programs list
+      const updatedResponse = await fetch('/api/programs');
+      const updatedData = await updatedResponse.json();
+      setPrograms(updatedData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add program');
+    }
+  };
+
+  const handleEditProgram = async (programId: string) => {
+    // TODO: Implement edit program form
+    const updatedProgram = {
+      // Add form data here
+    };
+
+    try {
+      const response = await fetch('/api/programs', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: programId, ...updatedProgram }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update program');
+      }
+
+      // Refresh programs list
+      const updatedResponse = await fetch('/api/programs');
+      const updatedData = await updatedResponse.json();
+      setPrograms(updatedData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update program');
+    }
+  };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>): void => {
     // Implement search functionality
@@ -116,15 +182,23 @@ const ProgramsManagement: React.FC = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {programs.map((program) => (
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center">Loading...</TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center text-red-500">{error}</TableCell>
+                </TableRow>
+              ) : programs.map((program) => (
                 <TableRow key={program.id}>
                   <TableCell className="font-medium">{program.name}</TableCell>
-                  <TableCell>{program.university}</TableCell>
+                  <TableCell>{program.level}</TableCell>
                   <TableCell>
-                    <StatusBadge status={program.status} />
+                    <StatusBadge status={program.isActive ? 'Active' : 'Inactive'} />
                   </TableCell>
-                  <TableCell>{program.eligibility}</TableCell>
-                  <TableCell>{program.lastUpdated}</TableCell>
+                  <TableCell>{program.eligibilityCriteria ? JSON.stringify(program.eligibilityCriteria) : 'N/A'}</TableCell>
+                  <TableCell>{new Date(program.updatedAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <Button 
                       variant="ghost" 
