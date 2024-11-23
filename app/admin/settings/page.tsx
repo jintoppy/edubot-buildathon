@@ -43,7 +43,7 @@ const AIModelSettings: React.FC = () => {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="model">Model Selection</Label>
-          <Select value={config.modelName ?? undefined}>
+          <Select defaultValue={config.modelName}>
             <SelectTrigger>
               <SelectValue placeholder="Select model" />
             </SelectTrigger>
