@@ -97,8 +97,8 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
                   <SelectValue placeholder="Select level" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="bachelors">Bachelor's</SelectItem>
-                  <SelectItem value="masters">Master's</SelectItem>
+                  <SelectItem value="bachelors">{`Bachelor's`}</SelectItem>
+                  <SelectItem value="masters">{`Master's`}</SelectItem>
                   <SelectItem value="phd">PhD</SelectItem>
                 </SelectContent>
               </Select>
