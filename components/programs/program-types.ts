@@ -29,7 +29,7 @@ export const programFormSchema = z.object({
     language: z.object({
       acceptedTests: z.object({
         IELTS: z.object({
-          overallScore: z.number().optional(),
+          overallScore: z.number().nullable().optional(),
           minimumScores: z.object({
             reading: z.preprocess((val) => (val === '' || isNaN(Number(val)) ? null : Number(val)), z.number().nullable()),
             writing: z.preprocess((val) => (val === '' || isNaN(Number(val)) ? null : Number(val)), z.number().nullable()),
@@ -116,9 +116,7 @@ export const programFormSchema = z.object({
     }).optional(),
     specialConditions: z.object({
       countrySpecificRequirements: z.array(z.object({
-        country: z.string().nullable().optional(),
-        additionalDocuments: z.array(z.string()),
-        specialConditions: z.array(z.string())
+        additionalDocuments: z.string(),
       })).nullable().optional(),
       quotaReservations: z.array(z.object({
         category: z.string().nullable().optional(),
@@ -131,7 +129,7 @@ export const programFormSchema = z.object({
         amount: z.number().nullable().optional(),
         currency: z.string().nullable().optional()
       })).optional()
-    }).optional()
+    }).nullable().optional()
   }).optional()
 });
 

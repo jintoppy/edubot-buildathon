@@ -135,7 +135,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                   <Input
                     id="tuitionFee"
                     type="number"
-                    {...form.register("tuitionFee", { valueAsNumber: true })}
+                    {...form.register("tuitionFee", { setValueAs: (v) => (v === "" ? null : parseFloat(v)) })}
                   />
                   <Select
                     value={form.watch("currency")}
@@ -229,7 +229,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                     <Label>Years Required</Label>
                     <Input
                       type="number"
-                      {...form.register("eligibilityCriteria.professional.workExperience.yearsRequired", { valueAsNumber: true })}
+                      {...form.register("eligibilityCriteria.professional.workExperience.yearsRequired", { setValueAs: (v) => (v === "" ? null : parseFloat(v)) })}
                     />
                   </div>
                   <div className="space-y-2">
@@ -289,7 +289,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                     <Input
                       type="number"
                       step="0.5"
-                      {...form.register("eligibilityCriteria.language.acceptedTests.IELTS.minimumScores.writing", { valueAsNumber: true })}
+                      {...form.register("eligibilityCriteria.language.acceptedTests.IELTS.minimumScores.writing", { setValueAs: (v) => (v === "" ? null : parseFloat(v)) })}
                     />
                   </div>
                   <div className="space-y-2">
@@ -297,7 +297,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                     <Input
                       type="number"
                       step="0.5"
-                      {...form.register("eligibilityCriteria.language.acceptedTests.IELTS.minimumScores.speaking", { valueAsNumber: true })}
+                      {...form.register("eligibilityCriteria.language.acceptedTests.IELTS.minimumScores.speaking", { setValueAs: (v) => (v === "" ? null : parseFloat(v)) })}
                     />
                   </div>
                   <div className="space-y-2">
@@ -305,7 +305,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                     <Input
                       type="number"
                       step="0.5"
-                      {...form.register("eligibilityCriteria.language.acceptedTests.IELTS.minimumScores.listening", { valueAsNumber: true })}
+                      {...form.register("eligibilityCriteria.language.acceptedTests.IELTS.minimumScores.listening", { setValueAs: (v) => (v === "" ? null : parseFloat(v)) })}
                     />
                   </div>
                 </div>
@@ -389,14 +389,14 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                       <Label>Quantitative Score</Label>
                       <Input
                         type="number"
-                        {...form.register("eligibilityCriteria.standardizedTests.GMAT.minimumScores.quantitative", { valueAsNumber: true })}
+                        {...form.register("eligibilityCriteria.standardizedTests.GMAT.minimumScores.quantitative", { setValueAs: (v) => (v === "" ? null : parseFloat(v)) })}
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Verbal Score</Label>
                       <Input
                         type="number"
-                        {...form.register("eligibilityCriteria.standardizedTests.GMAT.minimumScores.verbal", { valueAsNumber: true })}
+                        {...form.register("eligibilityCriteria.standardizedTests.GMAT.minimumScores.verbal", { setValueAs: (v) => (v === "" ? null : parseFloat(v)) })}
                       />
                     </div>
                   </div>
@@ -416,7 +416,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                     <Label>Minimum Amount</Label>
                     <Input
                       type="number"
-                      {...form.register("eligibilityCriteria.additional.financialRequirements.minimumAmount", { valueAsNumber: true })}
+                      {...form.register("eligibilityCriteria.additional.financialRequirements.minimumAmount", { setValueAs: (v) => (v === "" ? null : parseFloat(v)) })}
                     />
                   </div>
                   <div className="space-y-2">
@@ -458,14 +458,14 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                       <Label>Academic Letters</Label>
                       <Input
                         type="number"
-                        {...form.register("eligibilityCriteria.additional.recommendationLetters.academic", { valueAsNumber: true })}
+                        {...form.register("eligibilityCriteria.additional.recommendationLetters.academic", { setValueAs: (v) => (v === "" ? null : parseFloat(v)) })}
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Professional Letters</Label>
                       <Input
                         type="number"
-                        {...form.register("eligibilityCriteria.additional.recommendationLetters.professional", { valueAsNumber: true })}
+                        {...form.register("eligibilityCriteria.additional.recommendationLetters.professional", { setValueAs: (v) => (v === "" ? null : parseFloat(v)) })}
                       />
                     </div>
                   </div>
