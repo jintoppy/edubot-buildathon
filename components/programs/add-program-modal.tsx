@@ -60,20 +60,10 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
     }
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    await onSubmit(formData)
+  const onFormSubmit = async (data: ProgramFormValues) => {
+    await onSubmit(data)
     setOpen(false)
-    setFormData({
-      name: '',
-      level: '',
-      duration: '',
-      tuitionFee: '',
-      currency: 'USD',
-      country: '',
-      description: '',
-      eligibilityCriteria: {}
-    })
+    form.reset()
   }
 
   return (
@@ -88,23 +78,20 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
         <DialogHeader>
           <DialogTitle>Add New Program</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onFormSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Program Name</Label>
               <Input
                 id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                required
+                {...form.register("name")}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="level">Level</Label>
               <Select
-                value={formData.level}
-                onValueChange={(value) => setFormData({...formData, level: value})}
-                required
+                value={form.watch("level")}
+                onValueChange={(value) => form.setValue("level", value as "bachelors" | "masters" | "phd")}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select level" />
@@ -120,9 +107,7 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
               <Label htmlFor="duration">Duration</Label>
               <Input
                 id="duration"
-                value={formData.duration}
-                onChange={(e) => setFormData({...formData, duration: e.target.value})}
-                required
+                {...form.register("duration")}
               />
             </div>
             <div className="space-y-2">
@@ -131,13 +116,11 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
                 <Input
                   id="tuitionFee"
                   type="number"
-                  value={formData.tuitionFee}
-                  onChange={(e) => setFormData({...formData, tuitionFee: e.target.value})}
-                  required
+                  {...form.register("tuitionFee", { valueAsNumber: true })}
                 />
                 <Select
-                  value={formData.currency}
-                  onValueChange={(value) => setFormData({...formData, currency: value})}
+                  value={form.watch("currency")}
+                  onValueChange={(value) => form.setValue("currency", value as "USD" | "EUR" | "GBP")}
                 >
                   <SelectTrigger className="w-[100px]">
                     <SelectValue placeholder="Currency" />
@@ -154,9 +137,7 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
               <Label htmlFor="country">Country</Label>
               <Input
                 id="country"
-                value={formData.country}
-                onChange={(e) => setFormData({...formData, country: e.target.value})}
-                required
+                {...form.register("country")}
               />
             </div>
           </div>
@@ -164,9 +145,7 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              required
+              {...form.register("description")}
             />
           </div>
           <div className="flex justify-end space-x-2">
