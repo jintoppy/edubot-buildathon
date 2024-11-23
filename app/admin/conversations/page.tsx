@@ -27,6 +27,7 @@ const AdminConversationsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedConversation, setSelectedConversation] = useState<ChatSession | null>(null);
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -90,6 +91,7 @@ const AdminConversationsPage = () => {
                 <TableHead>Start Time</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Summary</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -130,6 +132,16 @@ const AdminConversationsPage = () => {
                     <TableCell className="max-w-xs truncate">
                       {conversation.summary || 'No summary available'}
                     </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedConversation(conversation)}
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        View
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               )}
@@ -137,6 +149,13 @@ const AdminConversationsPage = () => {
           </Table>
         </div>
       </div>
+      {selectedConversation && (
+        <ConversationModal
+          open={!!selectedConversation}
+          onOpenChange={(open) => !open && setSelectedConversation(null)}
+          conversation={selectedConversation}
+        />
+      )}
     </DashboardShell>
   );
 };
