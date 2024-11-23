@@ -445,7 +445,7 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
                     <Label>Currency</Label>
                     <Select
                       value={form.watch("eligibilityCriteria.additional.financialRequirements.currency")}
-                      onValueChange={(value) => 
+                      onValueChange={(value: string) => 
                         form.setValue("eligibilityCriteria.additional.financialRequirements.currency", value)
                       }
                     >
@@ -468,7 +468,7 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
                   <Label>Recommendation Letters Required</Label>
                   <Switch 
                     checked={form.watch("eligibilityCriteria.additional.recommendationLetters.required")}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked: boolean) => 
                       form.setValue("eligibilityCriteria.additional.recommendationLetters.required", checked)
                     }
                   />
