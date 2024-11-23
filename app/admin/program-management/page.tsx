@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Upload, Search } from 'lucide-react';
 import { AddProgramModal } from '@/components/programs/add-program-modal';
+import { EditProgramModal } from '@/components/programs/edit-program-modal';
 
 interface Program {
   id: string;
@@ -103,19 +104,14 @@ const ProgramsManagement: React.FC = () => {
     }
   };
 
-  const handleEditProgram = async (programId: string) => {
-    // TODO: Implement edit program form
-    const updatedProgram = {
-      // Add form data here
-    };
-
+  const handleEditProgram = async (programId: string, programData: any) => {
     try {
       const response = await fetch('/api/programs', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id: programId, ...updatedProgram }),
+        body: JSON.stringify({ id: programId, ...programData }),
       });
 
       if (!response.ok) {
@@ -198,13 +194,10 @@ const ProgramsManagement: React.FC = () => {
                   <TableCell>{program.eligibilityCriteria ? JSON.stringify(program.eligibilityCriteria) : 'N/A'}</TableCell>
                   <TableCell>{new Date(program.updatedAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => handleEditProgram(program.id)}
-                    >
-                      Edit
-                    </Button>
+                    <EditProgramModal 
+                      program={program}
+                      onSubmit={handleEditProgram}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
