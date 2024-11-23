@@ -11,75 +11,75 @@ export const programFormSchema = z.object({
   eligibilityCriteria: z.object({
     academic: z.object({
       minimumEducationLevel: z.object({
-        level: z.string(),
+        level: z.string().optional(),
         requiredStream: z.array(z.string()).optional(),
         specificMajors: z.array(z.string()).optional()
-      }),
+      }).optional(),
       minimumGPA: z.object({
-        score: z.number(),
-        maxScale: z.number(),
-        convertedPercentage: z.number()
-      }),
+        score: z.number().optional(),
+        maxScale: z.number().optional(),
+        convertedPercentage: z.number().optional()
+      }).optional(),
       requiredSubjects: z.array(z.object({
-        subjectName: z.string(),
-        minimumGrade: z.string(),
-        isCompulsory: z.boolean()
-      }))
-    }),
+        subjectName: z.string().optional(),
+        minimumGrade: z.string().optional(),
+        isCompulsory: z.boolean().optional()
+      })).optional()
+    }).optional(),
     language: z.object({
       acceptedTests: z.object({
         IELTS: z.object({
-          overallScore: z.number(),
+          overallScore: z.number().optional(),
           minimumScores: z.object({
-            reading: z.number(),
-            writing: z.number(),
-            speaking: z.number(),
-            listening: z.number()
-          })
+            reading: z.number().optional(),
+            writing: z.number().optional(),
+            speaking: z.number().optional(),
+            listening: z.number().optional()
+          }).optional()
         }).optional(),
         TOEFL: z.object({
-          overallScore: z.number(),
+          overallScore: z.number().optional(),
           minimumScores: z.object({
-            reading: z.number(),
-            writing: z.number(),
-            speaking: z.number(),
-            listening: z.number()
-          })
+            reading: z.number().optional(),
+            writing: z.number().optional(),
+            speaking: z.number().optional(),
+            listening: z.number().optional()
+          }).optional()
         }).optional()
-      })
-    }),
+      }).optional()
+    }).optional(),
     professional: z.object({
       workExperience: z.object({
-        yearsRequired: z.number(),
-        isCompulsory: z.boolean(),
-        relevantFieldsOnly: z.boolean(),
+        yearsRequired: z.number().optional(),
+        isCompulsory: z.boolean().optional(),
+        relevantFieldsOnly: z.boolean().optional(),
         acceptedFields: z.array(z.string()).optional()
-      }),
+      }).optional(),
       certifications: z.array(z.object({
-        name: z.string(),
-        isCompulsory: z.boolean(),
-        alternativesAccepted: z.array(z.string())
-      }))
+        name: z.string().optional(),
+        isCompulsory: z.boolean().optional(),
+        alternativesAccepted: z.array(z.string()).optional()
+      })).optional()
     }).optional(),
     standardizedTests: z.object({
       GRE: z.object({
-        required: z.boolean(),
+        required: z.boolean().optional(),
         minimumScores: z.object({
-          verbal: z.number(),
-          quantitative: z.number(),
-          analyticalWriting: z.number(),
+          verbal: z.number().optional(),
+          quantitative: z.number().optional(),
+          analyticalWriting: z.number().optional(),
           total: z.number().optional()
-        })
+        }).optional()
       }).optional(),
       GMAT: z.object({
-        required: z.boolean(),
+        required: z.boolean().optional(),
         minimumScores: z.object({
-          verbal: z.number(),
-          quantitative: z.number(),
-          analyticalWriting: z.number(),
-          integratedReasoning: z.number(),
-          total: z.number()
-        })
+          verbal: z.number().optional(),
+          quantitative: z.number().optional(),
+          analyticalWriting: z.number().optional(),
+          integratedReasoning: z.number().optional(),
+          total: z.number().optional()
+        }).optional()
       }).optional(),
       subjectTests: z.array(z.object({
         testName: z.string(),
@@ -89,15 +89,15 @@ export const programFormSchema = z.object({
     }).optional(),
     additional: z.object({
       ageLimit: z.object({
-        minimum: z.number(),
+        minimum: z.number().optional(),
         maximum: z.number().optional()
       }).optional(),
       financialRequirements: z.object({
-        proofOfFunds: z.boolean(),
-        minimumAmount: z.number(),
-        currency: z.string(),
-        durationInMonths: z.number()
-      }),
+        proofOfFunds: z.boolean().optional(),
+        minimumAmount: z.number().optional(),
+        currency: z.string().optional(),
+        durationInMonths: z.number().optional()
+      }).optional(),
       portfolioRequirements: z.object({
         required: z.boolean(),
         type: z.array(z.string()),
