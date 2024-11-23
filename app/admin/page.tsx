@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DashboardShell } from '@/components/dashboard/shell';
 import { DashboardHeader } from '@/components/dashboard/header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Activity, Users, BookOpen, BarChart2, ArrowUp, ArrowDown, LucideIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface StatCardProps {
   title: string;
@@ -100,13 +110,54 @@ const SystemHealth: React.FC = () => {
   );
 };
 
+const InviteCounselorDialog: React.FC = () => {
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Implement counselor invite logic
+    console.log('Inviting counselor:', email);
+    setEmail('');
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Invite Counselor</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Invite Counselor</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="counselor@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <Button type="submit">Send Invitation</Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const AdminDashboard: React.FC = () => {
   return (
     <DashboardShell>
-      <DashboardHeader 
-        heading="Admin Dashboard" 
-        text="Overview of your system's performance and recent activities"
-      />
+      <div className="flex justify-between items-center mb-4">
+        <DashboardHeader 
+          heading="Admin Dashboard" 
+          text="Overview of your system's performance and recent activities"
+        />
+        <InviteCounselorDialog />
+      </div>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
