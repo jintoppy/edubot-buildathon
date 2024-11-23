@@ -5,7 +5,8 @@ import { DashboardShell } from "@/components/dashboard/shell";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search } from "lucide-react";
+import { Search, Eye } from "lucide-react";
+import { ConversationModal } from "@/components/admin/conversation-modal";
 
 interface ChatSession {
   id: string;
