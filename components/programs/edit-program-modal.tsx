@@ -8,6 +8,19 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 
+'use client'
+
+import React from 'react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { programFormSchema, ProgramFormValues } from "./program-types"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+
 interface Program {
   id: string;
   name: string;
@@ -22,7 +35,7 @@ interface Program {
 
 interface EditProgramModalProps {
   program: Program;
-  onSubmit: (programId: string, programData: any) => Promise<void>;
+  onSubmit: (programId: string, programData: ProgramFormValues) => Promise<void>;
 }
 
 export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
@@ -68,13 +81,10 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
     }
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    await onSubmit(program.id, {
-      ...formData,
-      tuitionFee: parseFloat(formData.tuitionFee)
-    })
+  const handleSubmit = async (data: ProgramFormValues) => {
+    await onSubmit(program.id, data)
     setOpen(false)
+    form.reset()
   }
 
   return (
@@ -86,23 +96,20 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
         <DialogHeader>
           <DialogTitle>Edit Program</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Program Name</Label>
               <Input
                 id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                required
+                {...form.register("name")}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="level">Level</Label>
               <Select
-                value={formData.level}
-                onValueChange={(value) => setFormData({...formData, level: value})}
-                required
+                value={form.watch("level")}
+                onValueChange={(value) => form.setValue("level", value as "bachelors" | "masters" | "phd")}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select level" />
@@ -118,9 +125,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
               <Label htmlFor="duration">Duration</Label>
               <Input
                 id="duration"
-                value={formData.duration}
-                onChange={(e) => setFormData({...formData, duration: e.target.value})}
-                required
+                {...form.register("duration")}
               />
             </div>
             <div className="space-y-2">
@@ -129,13 +134,11 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                 <Input
                   id="tuitionFee"
                   type="number"
-                  value={formData.tuitionFee}
-                  onChange={(e) => setFormData({...formData, tuitionFee: e.target.value})}
-                  required
+                  {...form.register("tuitionFee", { valueAsNumber: true })}
                 />
                 <Select
-                  value={formData.currency}
-                  onValueChange={(value) => setFormData({...formData, currency: value})}
+                  value={form.watch("currency")}
+                  onValueChange={(value) => form.setValue("currency", value as "USD" | "EUR" | "GBP")}
                 >
                   <SelectTrigger className="w-[100px]">
                     <SelectValue placeholder="Currency" />
@@ -152,9 +155,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
               <Label htmlFor="country">Country</Label>
               <Input
                 id="country"
-                value={formData.country}
-                onChange={(e) => setFormData({...formData, country: e.target.value})}
-                required
+                {...form.register("country")}
               />
             </div>
           </div>
@@ -162,9 +163,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              required
+              {...form.register("description")}
             />
           </div>
           <div className="flex justify-end space-x-2">
