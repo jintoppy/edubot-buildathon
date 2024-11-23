@@ -237,7 +237,7 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                       <Label>Is Compulsory</Label>
                       <Switch 
                         checked={form.watch("eligibilityCriteria.professional.workExperience.isCompulsory")}
-                        onCheckedChange={(checked) => 
+                        onCheckedChange={(checked: boolean) => 
                           form.setValue("eligibilityCriteria.professional.workExperience.isCompulsory", checked)
                         }
                       />
