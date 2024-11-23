@@ -115,6 +115,7 @@ const SystemHealth: React.FC = () => {
 
 const InviteCounselorDialog: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -129,7 +130,7 @@ const InviteCounselorDialog: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, name }),
       });
 
       const data = await response.json();
@@ -144,6 +145,7 @@ const InviteCounselorDialog: React.FC = () => {
       });
       
       setEmail('');
+      setName('');
       setOpen(false);
     } catch (error) {
       toast({
@@ -166,6 +168,17 @@ const InviteCounselorDialog: React.FC = () => {
           <DialogTitle>Invite Counselor</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="John Doe"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
