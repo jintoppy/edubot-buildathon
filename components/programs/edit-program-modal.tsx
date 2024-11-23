@@ -7,16 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-
-'use client'
-
-import React from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
 import { programFormSchema, ProgramFormValues } from "./program-types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -115,8 +105,8 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                   <SelectValue placeholder="Select level" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="bachelors">Bachelor's</SelectItem>
-                  <SelectItem value="masters">Master's</SelectItem>
+                  <SelectItem value="bachelors">{`Bachelor's`}</SelectItem>
+                  <SelectItem value="masters">{`Master's`}</SelectItem>
                   <SelectItem value="phd">PhD</SelectItem>
                 </SelectContent>
               </Select>
