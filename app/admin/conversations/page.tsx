@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Eye } from "lucide-react";
 import { ConversationModal } from "@/components/admin/conversation-modal";
+import { Button } from "@/components/ui/button";
 
 interface ChatSession {
   id: string;
