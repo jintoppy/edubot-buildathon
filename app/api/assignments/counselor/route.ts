@@ -11,32 +11,29 @@ export async function GET(req: Request) {
   }
 
   try {
-    const assignments = await db.query.counselorAssignments.findMany({
-      where: eq(counselorAssignments.counselorId, authResult.user.id),
-      with: {
-        users: {
-          columns: {
-            id: true,
-            fullName: true,
-            email: true
-          }
+    const assignments = await db
+      .select({
+        id: counselorAssignments.id,
+        createdAt: counselorAssignments.createdAt,
+        status: counselorAssignments.status,
+        user: {
+          fullName: users.fullName,
+          email: users.email,
         },
-        programs: {
-          columns: {
-            id: true,
-            name: true,
-            level: true
-          }
+        program: {
+          name: programs.name,
+          level: programs.level,
         },
-        chatSessions: {
-          columns: {
-            id: true,
-            summary: true,
-            startTime: true
-          }
-        }
-      },
-    });
+        chatSession: {
+          summary: chatSessions.summary,
+          startTime: chatSessions.startTime,
+        },
+      })
+      .from(counselorAssignments)
+      .leftJoin(users, eq(counselorAssignments.studentId, users.id))
+      .leftJoin(programs, eq(counselorAssignments.programId, programs.id))
+      .leftJoin(chatSessions, eq(counselorAssignments.conversationId, chatSessions.id))
+      .where(eq(counselorAssignments.counselorId, authResult.user.id));
 
     return NextResponse.json(assignments);
   } catch (error) {

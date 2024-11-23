@@ -11,16 +11,17 @@ import { formatDate } from "@/lib/utils";
 
 interface Assignment {
   id: string;
-  users: {
+  createdAt: Date;
+  status: string;
+  user: {
     fullName: string;
     email: string;
   };
-  programs?: {
+  program?: {
     name: string;
     level: string;
   };
-  createdAt: Date;
-  chatSessions: {
+  chatSession: {
     summary: string | null;
     startTime: Date;
   };
@@ -45,10 +46,10 @@ export function AssignmentsTable({ assignments }: AssignmentsTableProps) {
       <TableBody>
         {assignments.map((assignment) => (
           <TableRow key={assignment.id}>
-            <TableCell>{assignment.users.fullName}</TableCell>
-            <TableCell>{assignment.programs?.name || "N/A"}</TableCell>
+            <TableCell>{assignment.user.fullName}</TableCell>
+            <TableCell>{assignment.program?.name || "N/A"}</TableCell>
             <TableCell>{formatDate(assignment.createdAt)}</TableCell>
-            <TableCell>{assignment.chatSessions.summary || "No summary available"}</TableCell>
+            <TableCell>{assignment.chatSession.summary || "No summary available"}</TableCell>
             <TableCell>
               <Button variant="outline" size="sm">
                 View Details
