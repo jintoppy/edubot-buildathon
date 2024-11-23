@@ -190,7 +190,9 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                   <Input
                     type="number"
                     step="0.1"
-                    {...form.register("eligibilityCriteria.academic.minimumGPA.score", { valueAsNumber: true })}
+                    {...form.register("eligibilityCriteria.academic.minimumGPA.score", {
+                      setValueAs: (v: string) => v === "" ? null : parseFloat(v)
+                    })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -198,14 +200,18 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                   <Input
                     type="number"
                     step="0.1"
-                    {...form.register("eligibilityCriteria.academic.minimumGPA.maxScale", { valueAsNumber: true })}
+                    {...form.register("eligibilityCriteria.academic.minimumGPA.maxScale", {
+                      setValueAs: (v: string) => v === "" ? null : parseFloat(v)
+                    })}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Percentage</Label>
                   <Input
                     type="number"
-                    {...form.register("eligibilityCriteria.academic.minimumGPA.convertedPercentage", { valueAsNumber: true })}
+                    {...form.register("eligibilityCriteria.academic.minimumGPA.convertedPercentage", {
+                      setValueAs: (v: string) => v === "" ? null : parseFloat(v)
+                    })}
                   />
                 </div>
               </div>

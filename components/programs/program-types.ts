@@ -16,9 +16,9 @@ export const programFormSchema = z.object({
         specificMajors: z.array(z.string()).optional()
       }).optional(),
       minimumGPA: z.object({
-        score: z.number().optional(),
-        maxScale: z.number().optional(),
-        convertedPercentage: z.number().optional()
+        score: z.number().nullable().optional(),
+        maxScale: z.number().nullable().optional(),
+        convertedPercentage: z.number().nullable().optional()
       }).optional(),
       requiredSubjects: z.array(z.object({
         subjectName: z.string().optional(),
