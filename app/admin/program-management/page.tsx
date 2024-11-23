@@ -6,7 +6,8 @@ import { DashboardHeader } from '@/components/dashboard/header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Upload, Search } from 'lucide-react';
+import { Upload, Search } from 'lucide-react';
+import { AddProgramModal } from '@/components/programs/add-program-modal';
 
 interface Program {
   id: string;
@@ -65,10 +66,11 @@ const ProgramsManagement: React.FC = () => {
     fetchPrograms();
   }, []);
 
-  const handleAddProgram = async () => {
-    // TODO: Implement add program form
+  const handleAddProgram = async (programData: any) => {
     const newProgram = {
-      // Add form data here
+      ...programData,
+      tuitionFee: parseFloat(programData.tuitionFee),
+      isActive: true
     };
 
     try {
@@ -141,10 +143,7 @@ const ProgramsManagement: React.FC = () => {
             <Upload className="mr-2 h-4 w-4" />
             Bulk Upload
           </Button>
-          <Button onClick={handleAddProgram}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Program
-          </Button>
+          <AddProgramModal onSubmit={handleAddProgram} />
         </div>
       </DashboardHeader>
 
