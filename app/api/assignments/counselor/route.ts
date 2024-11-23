@@ -2,21 +2,21 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { counselorAssignments } from "@/lib/db/schema";
-import { checkAuth } from "@/lib/auth";
+import { checkAuth } from "@/lib/checkAuth";
 
 export async function GET(req: Request) {
   const authResult = await checkAuth();
   if (authResult.error || !authResult.user) {
-    return NextResponse.json(authResult, { status: authResult.status });
+    return NextResponse.json(authResult, { status: 401 });
   }
 
   try {
     const assignments = await db.query.counselorAssignments.findMany({
       where: eq(counselorAssignments.counselorId, authResult.user.id),
       with: {
-        student: true,
-        program: true,
-        conversation: true,
+        users: true,
+        programs: true,
+        chatSessions: true,
       },
     });
 
