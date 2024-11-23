@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
-import { counselorAssignments } from "@/lib/db/schema";
+import { counselorAssignments, users, programs, chatSessions } from "@/lib/db/schema";
 import { checkAuth } from "@/lib/checkAuth";
 
 export async function GET(req: Request) {
