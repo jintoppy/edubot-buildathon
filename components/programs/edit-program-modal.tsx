@@ -49,21 +49,21 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
             specificMajors: []
           },
           minimumGPA: {
-            score: 0,
-            maxScale: 4,
-            convertedPercentage: 0
+            score: null,
+            maxScale: null,
+            convertedPercentage: null
           },
           requiredSubjects: []
         },
         language: {
           acceptedTests: {
             IELTS: {
-              overallScore: 6.5,
+              overallScore: null,
               minimumScores: {
-                reading: 6,
-                writing: 6,
-                speaking: 6,
-                listening: 6
+                reading: null,
+                writing: null,
+                speaking: null,
+                listening: null
               }
             }
           }
