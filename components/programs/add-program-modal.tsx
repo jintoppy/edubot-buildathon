@@ -444,7 +444,7 @@ export function AddProgramModal({ onSubmit }: AddProgramModalProps) {
                   <div className="space-y-2">
                     <Label>Currency</Label>
                     <Select
-                      value={form.watch("eligibilityCriteria.additional.financialRequirements.currency")}
+                      value={form.watch("eligibilityCriteria.additional.financialRequirements.currency") ?? undefined}
                       onValueChange={(value: string) => 
                         form.setValue("eligibilityCriteria.additional.financialRequirements.currency", value)
                       }
