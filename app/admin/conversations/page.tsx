@@ -29,7 +29,7 @@ const AdminConversationsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedConversation, setSelectedConversation] = useState<ChatSession | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -138,7 +138,7 @@ const AdminConversationsPage = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setSelectedConversation(conversation)}
+                        onClick={() => router.push(`/admin/conversations/${conversation.id}`)}
                       >
                         <Eye className="h-4 w-4 mr-2" />
                         View
@@ -151,13 +151,6 @@ const AdminConversationsPage = () => {
           </Table>
         </div>
       </div>
-      {selectedConversation && (
-        <ConversationModal
-          open={!!selectedConversation}
-          onOpenChange={(open) => !open && setSelectedConversation(null)}
-          conversation={selectedConversation}
-        />
-      )}
     </DashboardShell>
   );
 };
