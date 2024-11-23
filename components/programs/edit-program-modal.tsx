@@ -269,7 +269,9 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                     <Input
                       type="number"
                       step="0.5"
-                      {...form.register("eligibilityCriteria.language.acceptedTests.IELTS.overallScore", { valueAsNumber: true })}
+                      {...form.register("eligibilityCriteria.language.acceptedTests.IELTS.overallScore", {
+                        setValueAs: (v) => (v === "" ? null : parseFloat(v))
+                      })}
                     />
                   </div>
                   <div className="space-y-2">
@@ -332,14 +334,18 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                       <Label>Verbal Score</Label>
                       <Input
                         type="number"
-                        {...form.register("eligibilityCriteria.standardizedTests.GRE.minimumScores.verbal", { valueAsNumber: true })}
+                        {...form.register("eligibilityCriteria.standardizedTests.GRE.minimumScores.verbal", {
+                          setValueAs: (v) => (v === "" ? null : parseFloat(v))
+                        })}
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Quantitative Score</Label>
                       <Input
                         type="number"
-                        {...form.register("eligibilityCriteria.standardizedTests.GRE.minimumScores.quantitative", { valueAsNumber: true })}
+                        {...form.register("eligibilityCriteria.standardizedTests.GRE.minimumScores.quantitative", {
+                          setValueAs: (v) => (v === "" ? null : parseFloat(v))
+                        })}
                       />
                     </div>
                     <div className="space-y-2">
@@ -347,7 +353,9 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                       <Input
                         type="number"
                         step="0.5"
-                        {...form.register("eligibilityCriteria.standardizedTests.GRE.minimumScores.analyticalWriting", { valueAsNumber: true })}
+                        {...form.register("eligibilityCriteria.standardizedTests.GRE.minimumScores.analyticalWriting", {
+                          setValueAs: (v) => (v === "" ? null : parseFloat(v))
+                        })}
                       />
                     </div>
                   </div>
@@ -372,7 +380,9 @@ export function EditProgramModal({ program, onSubmit }: EditProgramModalProps) {
                       <Label>Total Score</Label>
                       <Input
                         type="number"
-                        {...form.register("eligibilityCriteria.standardizedTests.GMAT.minimumScores.total", { valueAsNumber: true })}
+                        {...form.register("eligibilityCriteria.standardizedTests.GMAT.minimumScores.total", {
+                          setValueAs: (v) => (v === "" ? null : parseFloat(v))
+                        })}
                       />
                     </div>
                     <div className="space-y-2">
