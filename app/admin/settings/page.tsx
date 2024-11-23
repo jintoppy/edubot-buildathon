@@ -43,7 +43,7 @@ const AIModelSettings: React.FC = () => {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="model">Model Selection</Label>
-          <Select defaultValue={config.modelName}>
+          <Select value={config.modelName ?? undefined}>
             <SelectTrigger>
               <SelectValue placeholder="Select model" />
             </SelectTrigger>
@@ -119,7 +119,7 @@ const SystemPreferences: React.FC = () => (
       </div>
       <div className="space-y-2">
         <Label htmlFor="timezone">Default Timezone</Label>
-        <Select defaultValue="UTC">
+        <Select value="UTC">
           <SelectTrigger>
             <SelectValue placeholder="Select timezone" />
           </SelectTrigger>
