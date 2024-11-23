@@ -21,21 +21,21 @@ export async function GET(req: Request) {
     const assignments = await db.query.counselorAssignments.findMany({
       where: isNull(counselorAssignments.counselorId),
       with: {
-        student: {
+        users: {
           columns: {
             id: true,
             fullName: true,
             email: true
           }
         },
-        program: {
+        programs: {
           columns: {
             id: true,
             name: true,
             level: true
           }
         },
-        conversation: {
+        chatSessions: {
           columns: {
             id: true,
             summary: true,
