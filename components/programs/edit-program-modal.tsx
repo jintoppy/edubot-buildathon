@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { programFormSchema, ProgramFormValues } from "./program-types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { Switch } from '../ui/switch'
 
 interface Program {
   id: string;
