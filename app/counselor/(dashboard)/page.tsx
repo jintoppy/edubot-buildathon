@@ -1,44 +1,47 @@
+"use client";
+
 import { DashboardShell } from "@/components/dashboard/shell";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { AssignmentsTabs } from "@/components/counselor/assignments-tabs";
+import { useEffect, useState } from "react";
 
-async function getOpenAssignments() {
-  console.log('url', process.env.NEXT_PUBLIC_APP_URL);
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/assignments?status=open`);
-  if (!response.ok) throw new Error('Failed to fetch open assignments');
-  return response.json();
-}
+export default function CounselorDashboardHomePage() {
+  const [openAssignments, setOpenAssignments] = useState([]);
+  const [myAssignments, setMyAssignments] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-async function getCounselorAssignments() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/assignments/counselor`);
-  if (!response.ok) throw new Error('Failed to fetch counselor assignments');
-  return response.json();
-}
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      try {
+        const [openResponse, myResponse] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/assignments?status=open`),
+          fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/assignments/counselor`)
+        ]);
 
-export default async function CounselorDashboardHomePage() {
+        if (!openResponse.ok || !myResponse.ok) {
+          throw new Error('Failed to fetch assignments');
+        }
 
-  try {
-    const [openAssignments, myAssignments] = await Promise.all([
-      getOpenAssignments(),
-      getCounselorAssignments(),
-    ]);
+        const [openData, myData] = await Promise.all([
+          openResponse.json(),
+          myResponse.json()
+        ]);
 
-    return (
-      <DashboardShell>
-        <DashboardHeader 
-          heading="Counselor Dashboard" 
-          text="Manage your student assignments and view open requests"
-        />
-        <div className="mt-8">
-          <AssignmentsTabs
-            openAssignments={openAssignments}
-            myAssignments={myAssignments}
-          />
-        </div>
-      </DashboardShell>
-    );
-  } catch (error) {
-    console.error("Error loading assignments:", error);
+        setOpenAssignments(openData);
+        setMyAssignments(myData);
+      } catch (err) {
+        console.error("Error loading assignments:", err);
+        setError("Failed to load assignments");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAssignments();
+  }, []);
+
+  if (error) {
     return (
       <DashboardShell>
         <DashboardHeader 
@@ -46,9 +49,38 @@ export default async function CounselorDashboardHomePage() {
           text="Error loading assignments"
         />
         <div className="mt-8">
-          There was an error loading the assignments. Please try again later.
+          {error}. Please try again later.
         </div>
       </DashboardShell>
     );
   }
+
+  if (isLoading) {
+    return (
+      <DashboardShell>
+        <DashboardHeader 
+          heading="Counselor Dashboard" 
+          text="Loading assignments..."
+        />
+        <div className="mt-8">
+          Loading...
+        </div>
+      </DashboardShell>
+    );
+  }
+
+  return (
+    <DashboardShell>
+      <DashboardHeader 
+        heading="Counselor Dashboard" 
+        text="Manage your student assignments and view open requests"
+      />
+      <div className="mt-8">
+        <AssignmentsTabs
+          openAssignments={openAssignments}
+          myAssignments={myAssignments}
+        />
+      </div>
+    </DashboardShell>
+  );
 }
