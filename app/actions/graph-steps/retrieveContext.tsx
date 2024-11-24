@@ -10,6 +10,13 @@ import { generateEmbedding, rankAndCombineResults } from "@/lib/embedding";
 const routerModel = new ChatAnthropic({ model: "claude-3-5-sonnet-20241022", temperature: 0 });
 const topK = 3;
 
+interface Document<T extends Record<string, any> = Record<string, any>> {
+  pageContent: string;
+  metadata: T & {
+    documentId: string;
+  };
+}
+
 export async function retrieveContext(state: GraphStateType) {
   console.log('STEP: retrieveContext');
   const vectorStore = await loadVectorStore();
