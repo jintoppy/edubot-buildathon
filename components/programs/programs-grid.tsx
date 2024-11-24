@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -74,7 +76,7 @@ const ProgramCard = ({ program }: { program: Program }) => {
               <div>
                 <h4 className="font-semibold mb-2">Curriculum Highlights</h4>
                 <ul className="list-disc list-inside space-y-1">
-                  {program.curriculum.map((item, index) => (
+                  {program.curriculum?.map((item, index) => (
                     <li key={index} className="text-sm">{item}</li>
                   ))}
                 </ul>
