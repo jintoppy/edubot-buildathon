@@ -24,17 +24,25 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { userId } = auth();
-    
-    if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
+    const authResult = await checkAuth();
+    if (authResult.error || !authResult.user) {
+      return NextResponse.json(authResult, { status: 401 });
+    }
+
+    // Get user's UUID from our database
+    const user = await db.query.users.findFirst({
+      where: eq(users.clerkId, authResult.user.id)
+    });
+
+    if (!user) {
+      return new NextResponse("User not found", { status: 404 });
     }
 
     const data = await req.json();
     
     // Check if profile exists
     const existingProfile = await db.query.studentProfiles.findFirst({
-      where: eq(studentProfiles.userId, userId)
+      where: eq(studentProfiles.userId, user.id)
     });
 
     if (existingProfile) {
@@ -45,11 +53,11 @@ export async function POST(req: Request) {
           ...data,
           updatedAt: new Date()
         })
-        .where(eq(studentProfiles.userId, userId));
+        .where(eq(studentProfiles.userId, user.id));
     } else {
       // Create new profile
       await db.insert(studentProfiles).values({
-        userId,
+        userId: user.id,
         ...data
       });
     }

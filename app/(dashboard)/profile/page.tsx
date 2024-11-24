@@ -9,10 +9,23 @@ import { eq } from "drizzle-orm"
 export default async function DashboardProfilePage() {
   const { userId } = await auth();
   
+  if (!userId) {
+    return null;
+  }
+
+  // First get the user's UUID from our database
+  const user = await db.query.users.findFirst({
+    where: eq(users.clerkId, userId)
+  });
+
+  if (!user) {
+    return null;
+  }
+  
   // Fetch existing profile if it exists
-  const profile = userId ? await db.query.studentProfiles.findFirst({
-    where: eq(studentProfiles.userId, userId)
-  }) : null;
+  const profile = await db.query.studentProfiles.findFirst({
+    where: eq(studentProfiles.userId, user.id)
+  });
 
   return (
     <DashboardShell>
