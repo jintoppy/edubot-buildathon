@@ -17,19 +17,29 @@ import { CalendarDays, GraduationCap, Clock, Video } from "lucide-react";
 // Types
 interface Program {
   id: string;
-  title: string;
-  institute: string;
-  description: string;
-  location: string;
+  universityId: string;
+  name: string;
+  level: string;
   duration: string;
-  startDate: string;
-  tuitionFee: string;
-  curriculum: string[];
-  imageUrl: string;
+  tuitionFee: number;
+  currency: string;
+  country: string;
+  eligibilityCriteria: {
+    academicRequirements?: string[];
+    languageRequirements?: {
+      test: string;
+      minimumScore: number;
+    }[];
+    workExperience?: string;
+  };
+  description: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 
-const ProgramCard = ({ program }: { program: Program }) => {
+const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetails: (id: string) => void }) => {
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="space-y-2">
@@ -55,35 +65,73 @@ const ProgramCard = ({ program }: { program: Program }) => {
       <CardFooter className="flex flex-col space-y-2">
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="outline" className="w-full">View Details</Button>
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={() => onViewDetails(program.id)}
+            >
+              View Details
+            </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{program.title}</DialogTitle>
-              <DialogDescription>{program.institute}</DialogDescription>
+              <DialogTitle>{program.name}</DialogTitle>
+              <DialogDescription>Level: {program.level}</DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
+            <div className="grid gap-6 py-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   <span>Duration: {program.duration}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4" />
-                  <span>Start Date: {program.startDate}</span>
+                  <GraduationCap className="h-4 w-4" />
+                  <span>Country: {program.country}</span>
                 </div>
               </div>
-              <div>
-                <h4 className="font-semibold mb-2">Curriculum Highlights</h4>
-                <ul className="list-disc list-inside space-y-1">
-                  {program.curriculum?.map((item, index) => (
-                    <li key={index} className="text-sm">{item}</li>
-                  ))}
-                </ul>
+              
+              <div className="space-y-2">
+                <h4 className="font-semibold">Description</h4>
+                <p className="text-sm text-gray-600">{program.description}</p>
               </div>
+
+              <div className="space-y-2">
+                <h4 className="font-semibold">Eligibility Criteria</h4>
+                {program.eligibilityCriteria?.academicRequirements && (
+                  <div>
+                    <h5 className="text-sm font-medium">Academic Requirements:</h5>
+                    <ul className="list-disc list-inside space-y-1">
+                      {program.eligibilityCriteria.academicRequirements.map((req, index) => (
+                        <li key={index} className="text-sm">{req}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {program.eligibilityCriteria?.languageRequirements && (
+                  <div>
+                    <h5 className="text-sm font-medium">Language Requirements:</h5>
+                    <ul className="list-disc list-inside space-y-1">
+                      {program.eligibilityCriteria.languageRequirements.map((req, index) => (
+                        <li key={index} className="text-sm">
+                          {req.test}: Minimum score {req.minimumScore}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {program.eligibilityCriteria?.workExperience && (
+                  <div>
+                    <h5 className="text-sm font-medium">Work Experience:</h5>
+                    <p className="text-sm">{program.eligibilityCriteria.workExperience}</p>
+                  </div>
+                )}
+              </div>
+
               <div className="flex flex-col space-y-2">
                 <Badge variant="secondary" className="w-fit">
-                  Tuition Fee: {program.tuitionFee}
+                  Tuition Fee: {program.tuitionFee} {program.currency}
                 </Badge>
               </div>
               <div className="flex flex-col md:flex-row gap-2">
@@ -112,6 +160,20 @@ export const ProgramsGrid = () => {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+
+  const handleViewDetails = async (programId: string) => {
+    try {
+      const response = await fetch(`/api/programs/${programId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch program details');
+      }
+      const data = await response.json();
+      setSelectedProgram(data);
+    } catch (err) {
+      console.error('Error fetching program details:', err);
+    }
+  };
 
   useEffect(() => {
     const fetchPrograms = async () => {
@@ -143,7 +205,11 @@ export const ProgramsGrid = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {programs.map((program) => (
-        <ProgramCard key={program.id} program={program} />
+        <ProgramCard 
+          key={program.id} 
+          program={selectedProgram?.id === program.id ? selectedProgram : program}
+          onViewDetails={handleViewDetails}
+        />
       ))}
     </div>
   );
