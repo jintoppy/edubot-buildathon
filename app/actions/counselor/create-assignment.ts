@@ -16,8 +16,8 @@ export async function createCounselorAssignment(state: GraphStateType) {
     const assignment = await db.insert(counselorAssignments).values({
       studentId,
       programId: programId || null,
-      status: "OPEN", // From assignmentStatusEnum
-      priority: "MEDIUM",
+      status: "open", // From assignmentStatusEnum
+      priority: "medium",
       notes: state.messages.length > 0 
         ? `Last message: ${state.messages[state.messages.length - 1].content}`
         : "Student requested counselor assistance",
