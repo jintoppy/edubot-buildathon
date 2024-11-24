@@ -19,13 +19,21 @@ export async function retrieveContext(state: GraphStateType) {
   switch (state.queryType) {
     case 'GENERAL_QUESTION': {
       const query = state.messages[state.messages.length - 1].content;
+      
+      // Vector search
       const queryVector = await generateEmbedding(query.toString());
-      console.log(queryVector.embedding);
-      if(queryVector.embedding){
-        const results = await vectorStore.similaritySearchVectorWithScore(queryVector.embedding, topK);
-        context = results.map(([doc, score]) => doc);
+      let vectorResults: [Document, number][] = [];
+      if (queryVector.embedding) {
+        vectorResults = await vectorStore.similaritySearchVectorWithScore(queryVector.embedding, topK);
       }
-      else {
+
+      // Text search
+      const textResults = await vectorStore.similaritySearch(query.toString(), topK);
+
+      // Combine and rank results
+      context = rankAndCombineResults(vectorResults, textResults, query.toString());
+      
+      if (!context.length) {
         context = [];
       }
       break;

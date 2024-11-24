@@ -84,3 +84,54 @@ export async function generateQueryEmbedding(query: string) {
 
   return result.embedding;
 }
+
+// Calculate text similarity score using simple token matching
+export function calculateTextSimilarity(text: string, query: string): number {
+  const textTokens = new Set(text.toLowerCase().split(/\s+/));
+  const queryTokens = query.toLowerCase().split(/\s+/);
+  
+  let matches = 0;
+  for (const token of queryTokens) {
+    if (textTokens.has(token)) matches++;
+  }
+  
+  return matches / queryTokens.length;
+}
+
+// Combine and rank search results
+export function rankAndCombineResults(
+  vectorResults: [Document, number][],
+  textResults: Document[],
+  query: string
+): Document[] {
+  const scoredResults = new Map<string, { doc: Document; score: number }>();
+
+  // Process vector search results
+  vectorResults.forEach(([doc, score], index) => {
+    scoredResults.set(doc.pageContent, {
+      doc,
+      score: score * 0.7 + (1 / (index + 1)) * 0.3 // Weight vector similarity higher
+    });
+  });
+
+  // Process text search results
+  textResults.forEach((doc, index) => {
+    const textScore = calculateTextSimilarity(doc.pageContent, query);
+    const existing = scoredResults.get(doc.pageContent);
+    
+    if (existing) {
+      existing.score += textScore * 0.5; // Boost score if found in both searches
+    } else {
+      scoredResults.set(doc.pageContent, {
+        doc,
+        score: textScore * 0.5 + (1 / (index + 1)) * 0.2
+      });
+    }
+  });
+
+  // Sort by combined score and return documents
+  return Array.from(scoredResults.values())
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.doc)
+    .slice(0, 5); // Return top 5 results
+}
