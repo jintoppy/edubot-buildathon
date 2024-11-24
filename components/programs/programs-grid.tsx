@@ -49,14 +49,14 @@ const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetai
           className="w-full h-48 object-cover rounded-md"
         />
         <div className="space-y-1">
-          <CardTitle className="text-xl">{program.title}</CardTitle>
+          <CardTitle className="text-xl">{program.name}</CardTitle>
           <CardDescription className="text-sm text-gray-500">
-            {program.institute}
+            {program.universityId}
           </CardDescription>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <GraduationCap className="h-4 w-4" />
-          <span>{program.location}</span>
+          <span>{program.country}</span>
         </div>
       </CardHeader>
       <CardContent className="flex-grow">
@@ -112,9 +112,9 @@ const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetai
                   <div>
                     <h5 className="text-sm font-medium">Language Requirements:</h5>
                     <ul className="list-disc list-inside space-y-1">
-                      {program.eligibilityCriteria.languageRequirements.map((req, index) => (
+                      {Object.keys(program.eligibilityCriteria.languageRequirements)?.map((courseKey:string, index:number) => (
                         <li key={index} className="text-sm">
-                          {req.test}: Minimum score {req.minimumScore}
+                          {courseKey}: Minimum score {program.eligibilityCriteria?.languageRequirements ? program.eligibilityCriteria?.languageRequirements[courseKey] : ''}
                         </li>
                       ))}
                     </ul>
