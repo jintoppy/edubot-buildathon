@@ -57,13 +57,23 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const [isSidebarOpen, setSidebarOpen] = useState(true)
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  const toggleSidebar = () => {
+    if (isCollapsed) {
+      setIsExpanded(!isExpanded);
+    } else {
+      setIsCollapsed(true);
+      setIsExpanded(false);
+    }
+  }
 
   return (
     <div className="h-full relative">
       <div 
         className={cn(
           "hidden h-full md:flex md:flex-col md:fixed md:inset-y-0 bg-gray-900 transition-all duration-300",
-          isCollapsed ? "md:w-16 hover:w-72 group" : "md:w-72"
+          isCollapsed && !isExpanded ? "md:w-16" : "md:w-72"
         )}
       >
         <div className="flex flex-col h-full">
@@ -72,7 +82,7 @@ export default function DashboardLayout({
               <Link href="/" className="flex items-center gap-2">
                 <GraduationCap className="h-6 w-6 text-white" />
                 <span className={cn("text-xl font-bold text-white transition-opacity duration-300", 
-                  isCollapsed ? "opacity-0 group-hover:opacity-100" : "opacity-100"
+                  isCollapsed && !isExpanded ? "opacity-0" : "opacity-100"
                 )}>
                   EduBot
                 </span>
@@ -80,10 +90,10 @@ export default function DashboardLayout({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => setIsCollapsed(!isCollapsed)}
+                onClick={toggleSidebar}
                 className="text-white"
               >
-                {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                {isCollapsed && !isExpanded ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
               </Button>
             </div>
           </div>
@@ -102,7 +112,7 @@ export default function DashboardLayout({
                 >
                   <route.icon className={cn("h-5 w-5", route.color)} />
                   <span className={cn("transition-opacity duration-300",
-                    isCollapsed ? "opacity-0 group-hover:opacity-100 group-hover:inline" : "opacity-100"
+                    isCollapsed && !isExpanded ? "opacity-0" : "opacity-100"
                   )}>
                     {route.label}
                   </span>
@@ -114,7 +124,7 @@ export default function DashboardLayout({
       </div>
       <div className={cn(
         "transition-all duration-300",
-        isCollapsed ? "md:pl-16" : "md:pl-72"
+        isCollapsed && !isExpanded ? "md:pl-16" : "md:pl-72"
       )}>
         <div className="flex h-14 items-center px-4 border-b">
           <Button
