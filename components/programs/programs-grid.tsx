@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
@@ -26,45 +26,6 @@ interface Program {
   imageUrl: string;
 }
 
-// Sample data
-const samplePrograms: Program[] = [
-  {
-    id: "1",
-    title: "Computer Science",
-    institute: "University of Technology",
-    description: "Advanced program covering software development, algorithms, and computer systems.",
-    location: "United Kingdom",
-    duration: "4 years",
-    startDate: "September 2024",
-    tuitionFee: "$25,000/year",
-    curriculum: [
-      "Introduction to Programming",
-      "Data Structures and Algorithms",
-      "Database Systems",
-      "Software Engineering",
-      "Artificial Intelligence"
-    ],
-    imageUrl: "/api/placeholder/400/200"
-  },
-  {
-    id: "2",
-    title: "Data Science",
-    institute: "Tech Institute",
-    description: "Comprehensive program focusing on data analytics, machine learning, and statistical analysis.",
-    location: "Canada",
-    duration: "2 years",
-    startDate: "October 2024",
-    tuitionFee: "$30,000/year",
-    curriculum: [
-      "Statistical Methods",
-      "Machine Learning",
-      "Big Data Analytics",
-      "Data Visualization",
-      "Python Programming"
-    ],
-    imageUrl: "/api/placeholder/400/200"
-  },
-];
 
 const ProgramCard = ({ program }: { program: Program }) => {
   return (
@@ -146,9 +107,40 @@ const ProgramCard = ({ program }: { program: Program }) => {
 };
 
 export const ProgramsGrid = () => {
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const response = await fetch('/api/programs');
+        if (!response.ok) {
+          throw new Error('Failed to fetch programs');
+        }
+        const data = await response.json();
+        setPrograms(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch programs');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrograms();
+  }, []);
+
+  if (loading) {
+    return <div>Loading programs...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {samplePrograms.map((program) => (
+      {programs.map((program) => (
         <ProgramCard key={program.id} program={program} />
       ))}
     </div>
