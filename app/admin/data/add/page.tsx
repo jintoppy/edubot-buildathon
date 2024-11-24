@@ -1,10 +1,12 @@
+'use client';
+
 import { DashboardShell } from "@/components/dashboard/shell";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { customDataSchema, type CustomData } from "../types";
+import { customDataSchema, documentCategoryEnum, type CustomData } from "@/types/data";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -33,8 +35,7 @@ const AdminAddDataPage = () => {
 
   const onSubmit = async (data: CustomData) => {
     try {
-      // TODO: Implement your API call here
-      const response = await fetch("/api/custom-data", {
+      const response = await fetch("/api/data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

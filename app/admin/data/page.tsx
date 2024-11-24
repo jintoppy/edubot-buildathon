@@ -1,3 +1,5 @@
+'use client';
+
 import { DashboardShell } from "@/components/dashboard/shell";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { Button } from "@/components/ui/button";
@@ -10,17 +12,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { type CustomData } from "./types";
+import { type CustomData } from "@/types/data";
+import { useEffect, useState } from "react";
 
 async function getCustomData(): Promise<CustomData[]> {
-  // TODO: Implement your API call here
-  const response = await fetch("/api/custom-data");
+  const response = await fetch("/api/data");
   if (!response.ok) throw new Error("Failed to fetch custom data");
   return response.json();
 }
 
-const AdminDataPage = async () => {
-  const data = await getCustomData();
+const AdminDataPage = () => {
+  const [data, setData] = useState<CustomData[]>([]);
+
+  useEffect(() => {
+    getCustomData().then(response => {
+        setData(response);
+    })
+  }, []);
   const router = useRouter();
 
   return (

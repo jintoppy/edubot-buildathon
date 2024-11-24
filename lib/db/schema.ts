@@ -41,6 +41,18 @@ export const assignmentStatusEnum = pgEnum("assignment_status", [
   "completed"
 ]);
 
+// Enum for document categories
+export const documentCategoryEnum = pgEnum("document_category", [
+  "faq",                    // Frequently Asked Questions
+  "visa_information",       // Visa-related content
+  "application_guide",      // Application process guides
+  "program_information",    // General program information
+  "country_guide",          // Country-specific information
+  "financial_information",  // Financial guidance and scholarships
+  "test_preparation",       // Test prep resources
+  "general",               // Other general content
+]);
+
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   clerkId: text("clerk_id").notNull().unique(),
@@ -175,6 +187,40 @@ export const counselorAssignments = pgTable("counselor_assignments", {
   completedAt: timestamp("completed_at"),  // When assignment was completed
 });
 
+export const documentation = pgTable("documentation", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Basic content fields
+  title: text("title").notNull(),
+  content: text("content").notNull(),      // Rich text content from WYSIWYG editor
+  
+  // Categorization and organization
+  category: documentCategoryEnum("category").notNull(),
+  subcategory: text("subcategory"),        // Optional further categorization
+  slug: text("slug").notNull().unique(),   // URL-friendly version of title
+  
+  // SEO and display fields
+  description: text("description"),         // Short description/summary
+  keywords: jsonb("keywords").$type<string[]>(), // SEO keywords
+  
+  // Publishing status
+  isPublished: boolean("is_published").default(false),
+  publishedAt: timestamp("published_at"),
+  
+  // Metadata for any additional properties
+  metadata: jsonb("metadata"),
+  
+  // Related content
+  relatedDocIds: jsonb("related_doc_ids").$type<string[]>(),
+  
+  // Audit fields
+  createdBy: uuid("created_by").references(() => users.id),
+  updatedBy: uuid("updated_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type DocumentCategory = typeof documentCategoryEnum.enumValues;
 export type AssignmentStatus = typeof assignmentStatusEnum.enumValues;
 export type CommunicationMode = typeof communicationModeEnum.enumValues;
 export type SessionCategory = typeof sessionCategoryEnum.enumValues;

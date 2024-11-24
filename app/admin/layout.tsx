@@ -40,6 +40,12 @@ const routes = [
     color: "text-violet-500",
   },
   {
+    label: 'Data',
+    icon: Video,
+    href: '/admin/data',
+    color: "text-violet-500",
+  },
+  {
     label: 'Settings',
     icon: Video,
     href: '/admin/settings',

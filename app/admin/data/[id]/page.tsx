@@ -4,7 +4,7 @@ import { DashboardShell } from "@/components/dashboard/shell";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import ReactHtmlParser from "react-html-parser";
+import parse from 'html-react-parser';
 import {
   Card,
   CardContent,
@@ -129,7 +129,7 @@ const AdminDataPage = ({ params }: { params: { id: string } }) => {
               <div>
                 <span className="font-medium">Content:</span>
                 <div className="mt-2 p-4 bg-muted rounded-lg prose max-w-none">
-                  {ReactHtmlParser(doc.content)}
+                  {parse(doc.content)}
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
