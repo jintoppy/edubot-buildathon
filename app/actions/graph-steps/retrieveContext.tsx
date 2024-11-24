@@ -1,8 +1,8 @@
 import { ChatAnthropic } from "@langchain/anthropic";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { db } from '@/lib/db';
-import { eq, and, like } from 'drizzle-orm';
-import { programs, studentProfiles } from '@/lib/db/schema';
+import { eq, and, like, or } from 'drizzle-orm';
+import { documentation, programs, studentProfiles } from '@/lib/db/schema';
 import { loadVectorStore } from "@/lib/chat-utils";
 import { GraphStateType } from "../graph";
 import { generateEmbedding, rankAndCombineResults } from "@/lib/embedding";

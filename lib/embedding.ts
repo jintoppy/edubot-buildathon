@@ -104,7 +104,7 @@ interface DocumentWithContent {
   title: string;
   content: string;
   category: string;
-  description?: string;
+  description: string | null;
 }
 
 // Combine and rank search results
