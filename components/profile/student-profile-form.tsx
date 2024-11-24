@@ -38,6 +38,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 import { CalendarIcon, Loader2 } from "lucide-react";
 
 const profileFormSchema = z.object({
@@ -73,12 +74,25 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-export const ProfileForm = () => {
+interface ProfileFormProps {
+  initialData?: any;
+}
+
+export const ProfileForm = ({ initialData }: ProfileFormProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const { toast } = useToast();
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: {
+    defaultValues: initialData ? {
+      highestEducation: initialData.currentEducation,
+      englishTest: initialData.testScores?.english?.test || "",
+      englishScore: initialData.testScores?.english?.score || "",
+      otherTest: initialData.testScores?.other?.test || "",
+      otherScore: initialData.testScores?.other?.score || "",
+      workExperience: initialData.workExperience?.[0]?.description || "",
+      interests: initialData.extraCurricular?.[0]?.activity || "",
+    } : {
       firstName: "",
       lastName: "",
       email: "",
@@ -101,11 +115,45 @@ export const ProfileForm = () => {
   async function onSubmit(data: ProfileFormValues) {
     setIsLoading(true);
     try {
-      // Handle form submission
-      console.log(data);
-      // Add your API call here
+      const response = await fetch('/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          currentEducation: data.highestEducation,
+          desiredLevel: data.highestEducation === 'bachelors' ? 'masters' : 'phd',
+          testScores: {
+            english: {
+              test: data.englishTest,
+              score: data.englishScore
+            },
+            other: {
+              test: data.otherTest,
+              score: data.otherScore
+            }
+          },
+          workExperience: data.workExperience ? [{ description: data.workExperience }] : [],
+          extraCurricular: data.interests ? [{ activity: data.interests }] : []
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save profile');
+      }
+
+      // Show success message
+      toast({
+        title: "Success",
+        description: "Profile updated successfully",
+      });
     } catch (error) {
       console.error(error);
+      toast({
+        title: "Error",
+        description: "Failed to save profile",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
