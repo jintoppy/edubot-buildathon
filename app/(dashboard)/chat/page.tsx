@@ -60,7 +60,9 @@ export default function ChatPage() {
 
   const toggleMic = () => {
     setIsMicEnabled(!isMicEnabled)
-    // Implement mic toggle logic
+    if (room) {
+      room.localParticipant?.setMicrophoneEnabled(!isMicEnabled)
+    }
   }
 
   if (isConnecting) {
@@ -120,7 +122,11 @@ export default function ChatPage() {
       </DashboardHeader>
 
       <div className="grid h-full gap-4 md:grid-cols-[1fr,300px]">
-        <VideoChat audioToSpeak={audioToSpeak} handleAudioProcessed={handleAudioProcessed} />
+        <VideoChat 
+          audioToSpeak={audioToSpeak} 
+          handleAudioProcessed={handleAudioProcessed}
+          isMicEnabled={isMicEnabled}
+        />
         <ChatSidebar onNewMessage={handleNewAIMessage} />
       </div>
     </div>

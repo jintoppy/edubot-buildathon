@@ -9,12 +9,15 @@ import { useEffect, useRef } from "react";
 interface VideoChatProps {
   audioToSpeak: any;
   handleAudioProcessed: () => void;
+  isMicEnabled?: boolean;
 }
 
 export function VideoChat({
   audioToSpeak,
   handleAudioProcessed,
+  isMicEnabled = false,
 }: VideoChatProps) {
+  const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const isSimliInitialised = useRef(false);
   const simliClientRef = useRef<SimliClient | null>(null);
   const videoRef = useRef(null);
@@ -48,8 +51,67 @@ export function VideoChat({
     }
   }, [audioRef, videoRef, isSimliInitialised]);
 
+  // Handle microphone access
   useEffect(() => {
-    if (audioToSpeak) {
+    const setupMicrophone = async () => {
+      try {
+        if (isMicEnabled) {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          setMediaStream(stream);
+        } else {
+          if (mediaStream) {
+            mediaStream.getTracks().forEach(track => track.stop());
+            setMediaStream(null);
+          }
+        }
+      } catch (error) {
+        console.error('Error accessing microphone:', error);
+      }
+    };
+
+    setupMicrophone();
+
+    return () => {
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [isMicEnabled]);
+
+  // Handle audio processing
+  useEffect(() => {
+    if (!mediaStream || !isMicEnabled) return;
+
+    const audioContext = new AudioContext();
+    const source = audioContext.createMediaStreamSource(mediaStream);
+    const processor = audioContext.createScriptProcessor(4096, 1, 1);
+
+    source.connect(processor);
+    processor.connect(audioContext.destination);
+
+    processor.onaudioprocess = (e) => {
+      const inputData = e.inputBuffer.getChannelData(0);
+      // Convert Float32Array to Int16Array for compatibility
+      const audioData = new Int16Array(inputData.length);
+      for (let i = 0; i < inputData.length; i++) {
+        audioData[i] = inputData[i] * 32767;
+      }
+      
+      if (simliClientRef.current) {
+        simliClientRef.current.sendAudioData(new Uint8Array(audioData.buffer));
+      }
+    };
+
+    return () => {
+      processor.disconnect();
+      source.disconnect();
+      audioContext.close();
+    };
+  }, [mediaStream, isMicEnabled]);
+
+  // Handle AI speech
+  useEffect(() => {
+    if (audioToSpeak && !isMicEnabled) {
       const audioArray = new Uint8Array(audioToSpeak);
       console.log("audioArray", audioArray);
       console.log("audioArray length", audioArray.length);
