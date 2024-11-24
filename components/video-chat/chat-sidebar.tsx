@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,13 +17,17 @@ interface ExtendedMessage {
   content: string;
   createdAt?: Date;
   ui?: React.ReactNode;
-}
+});
 
 type Props = {
   onNewMessage: (msg: string) => void;
 };
 
-export function ChatSidebar({ onNewMessage }: Props) {
+export interface ChatSidebarRef {
+  addMessage: (message: ExtendedMessage) => void;
+}
+
+export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, ref) => {
   const [input, setInput] = useState("");
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -148,6 +152,12 @@ export function ChatSidebar({ onNewMessage }: Props) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [messages]);
+
+  useImperativeHandle(ref, () => ({
+    addMessage: (message: ExtendedMessage) => {
+      setMessages(prev => [...prev, message]);
+    }
+  }));
 
   return (
     <Card className="flex flex-col h-full">
