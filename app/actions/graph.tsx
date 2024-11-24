@@ -1,11 +1,12 @@
+'use server';
+
 import { StateGraph, MessagesAnnotation, Annotation, START, END } from "@langchain/langgraph";
-import { ChatOpenAI } from "@langchain/openai";
+import { ChatAnthropic } from "@langchain/anthropic";
 import { HumanMessage, BaseMessage, AIMessage, SystemMessage } from "@langchain/core/messages";
 import { createStreamableUI } from 'ai/rsc';
 import { db } from '@/lib/db';
 import { eq, and, like } from 'drizzle-orm';
 import { programs, studentProfiles } from '@/lib/db/schema';
-import { QdrantVectorStore } from '@langchain/qdrant';
 import { loadVectorStore } from "@/lib/chat-utils";
 
 const ProgramCard = ({ program }: { program: ProgramInterface }) => (
@@ -75,7 +76,7 @@ interface StudentProfileInterface {
 interface UIStreamInterface extends ReturnType<typeof createStreamableUI> {}
 
 // Define the Graph State
-export const GraphState = Annotation.Root({
+const GraphState = Annotation.Root({
   messages: Annotation({
     reducer: (x: BaseMessage[], y: BaseMessage[]) => x.concat(y)
   }),
@@ -121,14 +122,14 @@ export const GraphState = Annotation.Root({
 });
 
 // Export the type
-export type GraphStateType = typeof GraphState.State;
+type GraphStateType = typeof GraphState.State;
 
 const topK = 3;
 
 // OpenAI Models
-const routerModel = new ChatOpenAI({ model: "gpt-4", temperature: 0 });
-const responseModel = new ChatOpenAI({ model: "gpt-4", temperature: 0.7 });
-const relevanceModel = new ChatOpenAI({ model: "gpt-4", temperature: 0 });
+const routerModel = new ChatAnthropic({ model: "claude-3-5-sonnet-20241022", temperature: 0 });
+const responseModel = new ChatAnthropic({ model: "claude-3-5-sonnet-20241022", temperature: 0.7 });
+const relevanceModel = new ChatAnthropic({ model: "claude-3-5-sonnet-20241022", temperature: 0 });
 
 
 // Node 1: Classify Query
@@ -218,7 +219,7 @@ async function generateResponse(state: GraphStateType): Promise<Partial<GraphSta
       messages: [
         new AIMessage("I'm sorry, but I couldn't process your request properly. Could you please try again?")
       ],
-      currentStep: 'end_chat'
+      currentStep: END
     };
   }
 
@@ -406,7 +407,7 @@ async function generateResponse(state: GraphStateType): Promise<Partial<GraphSta
 
       return {
         messages: [new AIMessage("I'll help you connect with a human counselor who can provide personalized guidance.")],
-        currentStep: 'end_chat'
+        currentStep: END
       };
     }
 
@@ -430,14 +431,14 @@ async function generateResponse(state: GraphStateType): Promise<Partial<GraphSta
 
       return {
         messages: [new AIMessage("I can help you with educational guidance. What would you like to know about our programs?")],
-        currentStep: 'end_chat'
+        currentStep: END
       };
     }
 
     default: {
       return {
         messages: [new AIMessage("I'm not sure how to help with that. Could you please rephrase your question?")],
-        currentStep: 'end_chat'
+        currentStep: END
       };
     }
   }
@@ -491,12 +492,14 @@ const workflow = new StateGraph(GraphState)
 // Main Chat Function
 export async function chat(prevMessages: any[], message: string, userId: string) {
   const uiStream = createStreamableUI();
-  const result = await workflow.compile().invoke({
+  const result = await workflow.compile().stream({
     messages: [...prevMessages, new HumanMessage(message)],
     currentStep: 'start',
     uiStream,
     metadata: { userId, sessionId: crypto.randomUUID() },
-  });
+  },  { configurable: { thread_id: userId } });
 
-  return { messages: result.messages, display: result.uiStream.value };
+  return result;
+
+  //return { messages: result.messages, display: result.uiStream.value };
 }
