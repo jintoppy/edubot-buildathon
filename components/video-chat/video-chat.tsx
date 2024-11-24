@@ -10,12 +10,14 @@ interface VideoChatProps {
   audioToSpeak: any;
   handleAudioProcessed: () => void;
   isMicEnabled?: boolean;
+  onUserSpeech?: (text: string) => void;
 }
 
 export function VideoChat({
   audioToSpeak,
   handleAudioProcessed,
   isMicEnabled = false,
+  onUserSpeech,
 }: VideoChatProps) {
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const isSimliInitialised = useRef(false);
@@ -99,6 +101,13 @@ export function VideoChat({
       
       if (simliClientRef.current) {
         simliClientRef.current.sendAudioData(new Uint8Array(audioData.buffer));
+        
+        // Listen for transcription results
+        simliClientRef.current.on('transcription', (result: any) => {
+          if (result.text && onUserSpeech) {
+            onUserSpeech(result.text);
+          }
+        });
       }
     };
 

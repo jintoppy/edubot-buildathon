@@ -10,6 +10,13 @@ import { Loader2, Video, VideoOff, Mic, MicOff } from "lucide-react"
 import { textToSpeech } from "@/app/actions/tts"
 
 export default function ChatPage() {
+  const chatSidebarRef = useRef<any>(null);
+  
+  const handleNewMessage = (message: any) => {
+    if (chatSidebarRef.current) {
+      chatSidebarRef.current.addMessage(message);
+    }
+  };
   const [isConnecting, setIsConnecting] = useState(false)
   const [room, setRoom] = useState<Room | null>(null)
   const [isCameraEnabled, setIsCameraEnabled] = useState(true)
@@ -126,8 +133,24 @@ export default function ChatPage() {
           audioToSpeak={audioToSpeak} 
           handleAudioProcessed={handleAudioProcessed}
           isMicEnabled={isMicEnabled}
+          onUserSpeech={(text) => {
+            // Add user's speech to chat
+            const userMessage = {
+              id: Date.now().toString(),
+              role: 'user',
+              content: text,
+              createdAt: new Date(),
+            };
+            // Update chat messages through ChatSidebar
+            if (text.trim()) {
+              handleNewMessage(userMessage);
+            }
+          }}
         />
-        <ChatSidebar onNewMessage={handleNewAIMessage} />
+        <ChatSidebar 
+          onNewMessage={handleNewAIMessage}
+          ref={chatSidebarRef} 
+        />
       </div>
     </div>
   )
