@@ -16,6 +16,16 @@ function Chat() {
   const chatSidebarRef = useRef<any>(null);
 
   useEffect(() => {
+    setupSpeechRecognition();
+    
+    return () => {
+      if ((window as any).currentRecognition) {
+        (window as any).currentRecognition.stop();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     const fetchProgramDetails = async () => {
       if (programId) {
         try {
@@ -47,36 +57,40 @@ function Chat() {
     // Implement camera toggle logic
   };
 
+  const setupSpeechRecognition = () => {
+    if ((window as any).currentRecognition) {
+      (window as any).currentRecognition.stop();
+    }
+
+    const recognition = new (window as any).webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onresult = (event: any) => {
+      const last = event.results.length - 1;
+      const text = event.results[last][0].transcript;
+
+      if (event.results[last].isFinal) {
+        const userMessage = {
+          id: Date.now().toString(),
+          role: "user",
+          content: text,
+          createdAt: new Date(),
+        };
+        handleNewMessage(userMessage);
+      }
+    };
+
+    recognition.start();
+    // Store recognition instance for cleanup
+    (window as any).currentRecognition = recognition;
+  };
+
   const toggleMic = () => {
     setIsMicEnabled(!isMicEnabled);
-
-    // Setup speech recognition when mic is enabled
     if (!isMicEnabled) {
-      const recognition = new (window as any).webkitSpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-
-      recognition.onresult = (event: any) => {
-        const last = event.results.length - 1;
-        const text = event.results[last][0].transcript;
-
-        if (event.results[last].isFinal) {
-          const userMessage = {
-            id: Date.now().toString(),
-            role: "user",
-            content: text,
-            createdAt: new Date(),
-          };
-          handleNewMessage(userMessage);
-        }
-      };
-
-      recognition.start();
-
-      // Store recognition instance for cleanup
-      (window as any).currentRecognition = recognition;
+      setupSpeechRecognition();
     } else {
-      // Stop recognition when mic is disabled
       if ((window as any).currentRecognition) {
         (window as any).currentRecognition.stop();
       }
