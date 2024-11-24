@@ -47,16 +47,16 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
     },
   ]);
 
-  const fetchUserId = useCallback(async (clerkId: string) => {
+  const fetchUser = useCallback(async () => {
     try {
-      const response = await fetch(`/api/users/get-id?clerkId=${clerkId}`);
+      const response = await fetch('/api/users/me');
       if (!response.ok) {
-        throw new Error('Failed to fetch user ID');
+        throw new Error('Failed to fetch user data');
       }
       const data = await response.json();
-      setUserId(data.userId);
+      setUserId(data.user.id);
     } catch (error) {
-      console.error('Error fetching user ID:', error);
+      console.error('Error fetching user data:', error);
       toast({
         title: "Error",
         description: "Failed to initialize chat. Please try again.",
@@ -66,10 +66,8 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
   }, [toast]);
 
   useEffect(() => {
-    if (user?.id) {
-      fetchUserId(user.id);
-    }
-  }, [user?.id, fetchUserId]);
+    fetchUser();
+  }, [fetchUser]);
 
   useEffect(() => {
     const handleUIActions = (e: MouseEvent) => {
