@@ -7,9 +7,29 @@ import { DashboardHeader } from "@/components/dashboard/header"
 import { Button } from "@/components/ui/button"
 import { Loader2, Video, VideoOff, Mic, MicOff } from "lucide-react"
 import { textToSpeech } from "@/app/actions/tts"
+import { useSearchParams } from "next/navigation"
 
 export default function ChatPage() {
+  const searchParams = useSearchParams()
+  const programId = searchParams.get('programId')
+  const [programName, setProgramName] = useState<string | null>(null)
   const chatSidebarRef = useRef<any>(null);
+
+  useEffect(() => {
+    const fetchProgramDetails = async () => {
+      if (programId) {
+        try {
+          const response = await fetch(`/api/programs/${programId}`)
+          const data = await response.json()
+          setProgramName(data.name)
+        } catch (error) {
+          console.error('Error fetching program details:', error)
+        }
+      }
+    }
+
+    fetchProgramDetails()
+  }, [programId])
   
   const handleNewMessage = (message: any) => {
     if (chatSidebarRef.current) {
@@ -105,7 +125,7 @@ export default function ChatPage() {
       </div>
       
       <DashboardHeader
-        heading="AI Counselor"
+        heading={programName ? `Consultation on ${programName}` : "AI Counselor"}
         text="Have a conversation with your AI counselor"
       >
         <div className="flex gap-2">
