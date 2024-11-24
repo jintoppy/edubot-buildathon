@@ -22,16 +22,36 @@ export async function retrieveContext(state: GraphStateType) {
       
       // Vector search
       const queryVector = await generateEmbedding(query.toString());
-      let vectorResults: [Document, number][] = [];
+      let vectorResults: [{ documentId: string }, number][] = [];
       if (queryVector.embedding) {
         vectorResults = await vectorStore.similaritySearchVectorWithScore(queryVector.embedding, topK);
       }
 
       // Text search
-      const textResults = await vectorStore.similaritySearch(query.toString(), topK);
+      const textResults = await db.query.documentation.findMany({
+        where: or(
+          like(documentation.content, `%${query}%`),
+          like(documentation.title, `%${query}%`)
+        ),
+        columns: {
+          id: true,
+          title: true,
+          content: true,
+          category: true,
+          description: true,
+        },
+        limit: topK
+      });
 
       // Combine and rank results
-      context = rankAndCombineResults(vectorResults, textResults, query.toString());
+      context = await rankAndCombineResults(
+        vectorResults,
+        textResults.map(doc => ({
+          ...doc,
+          documentId: doc.id
+        })),
+        query.toString()
+      );
       
       if (!context.length) {
         context = [];

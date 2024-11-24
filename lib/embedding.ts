@@ -98,31 +98,60 @@ export function calculateTextSimilarity(text: string, query: string): number {
   return matches / queryTokens.length;
 }
 
+interface DocumentWithContent {
+  id: string;
+  documentId: string;
+  title: string;
+  content: string;
+  category: string;
+  description?: string;
+}
+
 // Combine and rank search results
-export function rankAndCombineResults(
-  vectorResults: [Document, number][],
-  textResults: Document[],
-  query: string
-): Document[] {
-  const scoredResults = new Map<string, { doc: Document; score: number }>();
+export async function rankAndCombineResults(
+  vectorResults: [{ documentId: string }, number][],
+  textResults: DocumentWithContent[],
+  query: string,
+): Promise<DocumentWithContent[]> {
+  const scoredResults = new Map<string, { doc: DocumentWithContent; score: number }>();
 
   // Process vector search results
-  vectorResults.forEach(([doc, score], index) => {
-    scoredResults.set(doc.pageContent, {
-      doc,
-      score: score * 0.7 + (1 / (index + 1)) * 0.3 // Weight vector similarity higher
+  for (const [doc, score] of vectorResults) {
+    const documentContent = await db.query.documentation.findFirst({
+      where: eq(documentation.id, doc.documentId),
+      columns: {
+        id: true,
+        title: true,
+        content: true,
+        category: true,
+        description: true,
+      }
     });
-  });
+
+    if (documentContent) {
+      scoredResults.set(doc.documentId, {
+        doc: {
+          id: documentContent.id,
+          documentId: doc.documentId,
+          title: documentContent.title,
+          content: documentContent.content,
+          category: documentContent.category,
+          description: documentContent.description || '',
+        },
+        score: score * 0.7 + (1 / (vectorResults.indexOf([doc, score]) + 1)) * 0.3
+      });
+    }
+  }
 
   // Process text search results
   textResults.forEach((doc, index) => {
-    const textScore = calculateTextSimilarity(doc.pageContent, query);
-    const existing = scoredResults.get(doc.pageContent);
+    const textScore = calculateTextSimilarity(doc.content, query);
+    const existing = scoredResults.get(doc.documentId);
     
     if (existing) {
       existing.score += textScore * 0.5; // Boost score if found in both searches
     } else {
-      scoredResults.set(doc.pageContent, {
+      scoredResults.set(doc.documentId, {
         doc,
         score: textScore * 0.5 + (1 / (index + 1)) * 0.2
       });
