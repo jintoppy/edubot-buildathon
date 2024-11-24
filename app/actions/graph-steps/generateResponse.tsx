@@ -226,19 +226,10 @@ export async function generateResponse(
     case "HUMAN_COUNSELOR": {
       state.uiStream.done(
         <div className="rounded-lg border p-4 bg-blue-50">
-          <h3 className="font-bold text-lg">Connect with a Counselor</h3>
           <p className="mt-2 text-gray-700">
             Our education counselors are here to help you make the best choice
-            for your future.
-          </p>
-          <div className="mt-4 space-x-4">
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-              Schedule a Call
-            </button>
-            <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-              Continue with AI Assistant
-            </button>
-          </div>
+            for your future. We will contact you soon.
+          </p>          
         </div>
       );
 
