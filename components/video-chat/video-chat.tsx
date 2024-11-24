@@ -125,7 +125,7 @@ export function VideoChat({
   }, [audioToSpeak]);
 
   return (
-    <Card className="flex flex-col h-screen overflow-hidden">
+    <Card className="flex flex-col h-[512px] overflow-hidden">
       <div className="relative flex-1 bg-muted">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">

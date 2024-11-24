@@ -121,7 +121,7 @@ export default function ChatPage() {
         </div>
       </DashboardHeader>
 
-      <div className="grid h-full gap-4 md:grid-cols-[1fr,300px]">
+      <div className="grid h-full gap-4 md:grid-cols-[512px,1fr]">
         <VideoChat 
           audioToSpeak={audioToSpeak} 
           handleAudioProcessed={handleAudioProcessed}
