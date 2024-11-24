@@ -1,5 +1,6 @@
 import { ChatAnthropic } from "@langchain/anthropic";
 import { AIMessage, SystemMessage } from "@langchain/core/messages";
+import { createCounselorAssignment } from "../counselor/create-assignment";
 import { ProgramCard } from "@/components/programs/program-card";
 import { StudentProfileView } from "@/components/profile/student-profile-view";
 import { GraphStateType } from "../graph";
@@ -224,23 +225,49 @@ export async function generateResponse(
     }
 
     case "HUMAN_COUNSELOR": {
-      state.uiStream.done(
-        <div className="rounded-lg border p-4 bg-blue-50">
-          <p className="mt-2 text-gray-700">
-            Our education counselors are here to help you make the best choice
-            for your future. We will contact you soon.
-          </p>          
-        </div>
-      );
+      try {
+        await createCounselorAssignment(state);
+        
+        state.uiStream.done(
+          <div className="rounded-lg border p-4 bg-blue-50">
+            <p className="mt-2 text-gray-700">
+              Our education counselors are here to help you make the best choice
+              for your future. We will contact you soon.
+            </p>
+            <p className="mt-2 text-sm text-gray-600">
+              A counselor will be assigned to assist you with your educational journey.
+            </p>
+          </div>
+        );
 
-      return {
-        messages: [
-          new AIMessage(
-            "I'll help you connect with a human counselor who can provide personalized guidance."
-          ),
-        ],
-        currentStep: END,
-      };
+        return {
+          messages: [
+            new AIMessage(
+              "I've arranged for a counselor to contact you. They will provide personalized guidance for your educational journey."
+            ),
+          ],
+          currentStep: END,
+        };
+      } catch (error) {
+        console.error("Error in counselor assignment:", error);
+        
+        state.uiStream.done(
+          <div className="rounded-lg border p-4 bg-red-50">
+            <p className="text-red-600">
+              We encountered an issue while processing your request. Please try again later.
+            </p>
+          </div>
+        );
+
+        return {
+          messages: [
+            new AIMessage(
+              "I apologize, but I encountered an issue while trying to connect you with a counselor. Please try again later."
+            ),
+          ],
+          currentStep: END,
+        };
+      }
     }
 
     case "IRRELEVANT": {
