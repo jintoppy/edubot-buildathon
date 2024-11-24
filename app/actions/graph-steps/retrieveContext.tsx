@@ -6,11 +6,10 @@ import { documentation, programs, studentProfiles } from '@/lib/db/schema';
 import { loadVectorStore } from "@/lib/chat-utils";
 import { GraphStateType } from "../graph";
 import { generateEmbedding, rankAndCombineResults } from "@/lib/embedding";
+import { Document } from "@langchain/core/documents";
 
 const routerModel = new ChatAnthropic({ model: "claude-3-5-sonnet-20241022", temperature: 0 });
 const topK = 3;
-
-import { Document } from "@langchain/core/documents";
 
 export async function retrieveContext(state: GraphStateType) {
   console.log('STEP: retrieveContext');

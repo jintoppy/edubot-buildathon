@@ -17,7 +17,7 @@ export async function classifyQueryType(state: GraphStateType) {
         - RECOMMENDATION_REQUEST
         - HUMAN_COUNSELOR
         - IRRELEVANT
-        GENERAL_QUESTION should have only questions about the academy programs, visa, tuition etc. Any other question outside of academy or foreign education related will come under IRRELEVANT category. 
+        GENERAL_QUESTION should have only questions about the Frequently Asked Questions ( about international education ), Visa-related queries, Application process guides, General program information, Country-specific information, Financial guidance and scholarships, Test prep resources. Any other question outside of academy or foreign education related will come under IRRELEVANT category. 
         Return only the category.
       `),
       new HumanMessage(lastMessage.content.toString()),
