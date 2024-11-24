@@ -39,6 +39,8 @@ const AdminDataPage = async () => {
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead>Updated At</TableHead>
               <TableHead>Actions</TableHead>
@@ -48,6 +50,17 @@ const AdminDataPage = async () => {
             {data.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.title}</TableCell>
+                <TableCell>
+                  {item.category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  {item.subcategory && ` - ${item.subcategory}`}
+                </TableCell>
+                <TableCell>
+                  <span className={`px-2 py-1 rounded-full text-sm ${
+                    item.isPublished ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {item.isPublished ? 'Published' : 'Draft'}
+                  </span>
+                </TableCell>
                 <TableCell>{new Date(item.createdAt!).toLocaleDateString()}</TableCell>
                 <TableCell>{new Date(item.updatedAt!).toLocaleDateString()}</TableCell>
                 <TableCell>
