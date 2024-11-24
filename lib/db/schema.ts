@@ -38,6 +38,14 @@ export const messageTypeEnum = pgEnum("message_type", [
   "action_item"       // Tasks/actions for the user
 ]);
 
+export const enrollmentStatusEnum = pgEnum("enrollment_status", [
+  "pending",          // Initial request status
+  "under_review",     // Being reviewed by counselor/admin
+  "approved",         // Request approved
+  "rejected",         // Request rejected
+  "cancelled"         // Cancelled by student
+]);
+
 export const assignmentStatusEnum = pgEnum("assignment_status", [
   "open",
   "assigned",
@@ -254,5 +262,25 @@ export type DocumentCategory = typeof documentCategoryEnum.enumValues;
 export type AssignmentStatus = typeof assignmentStatusEnum.enumValues;
 export type CommunicationMode = typeof communicationModeEnum.enumValues;
 export type SessionCategory = typeof sessionCategoryEnum.enumValues;
+export const programEnrollmentRequests = pgTable("program_enrollment_requests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // References
+  programId: uuid("program_id").references(() => programs.id).notNull(),
+  studentId: uuid("student_id").references(() => users.id).notNull(),
+  reviewerId: uuid("reviewer_id").references(() => users.id), // Counselor/admin reviewing the request
+  
+  // Request details
+  status: enrollmentStatusEnum("status").notNull().default("pending"),
+  notes: text("notes"),                    // Student's notes with the request
+  reviewNotes: text("review_notes"),       // Reviewer's notes
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  reviewedAt: timestamp("reviewed_at"),    // When request was reviewed
+});
+
 export type MessageType = typeof messageTypeEnum.enumValues;
 export type UserRole = typeof userRoleEnum.enumValues;
+export type EnrollmentStatus = typeof enrollmentStatusEnum.enumValues;
