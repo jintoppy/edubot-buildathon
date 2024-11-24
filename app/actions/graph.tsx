@@ -143,7 +143,7 @@ export async function chatAction(
     const uiStream = createStreamableUI();
     
     // Create or get existing chat session
-    let sessionId: string;
+    let sessionId: string | undefined;
     if (messages.length <= 1) { // Only system message present - new chat
       const [session] = await db.insert(chatSessions).values({
         studentId: userId,
