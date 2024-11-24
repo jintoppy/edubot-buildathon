@@ -10,7 +10,8 @@ import {
   UserCircle,
   Menu,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  PanelLeftOpen
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -97,6 +98,16 @@ export default function DashboardLayout({
               </Button>
             </div>
           </div>
+          {isCollapsed && !isExpanded && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleSidebar}
+              className="mx-auto mt-4 text-white hover:bg-white/10"
+            >
+              <PanelLeftOpen className="h-4 w-4" />
+            </Button>
+          )}
           <div className="flex-1 flex flex-col overflow-y-auto">
             <nav className="flex-1 px-2 py-4 space-y-2">
               {routes.map((route) => (
