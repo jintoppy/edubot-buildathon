@@ -8,7 +8,9 @@ import {
   Video, 
   GraduationCap, 
   UserCircle,
-  Menu
+  Menu,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -54,16 +56,36 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname()
   const [isSidebarOpen, setSidebarOpen] = useState(true)
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
   return (
     <div className="h-full relative">
-      <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 bg-gray-900">
+      <div 
+        className={cn(
+          "hidden h-full md:flex md:flex-col md:fixed md:inset-y-0 bg-gray-900 transition-all duration-300",
+          isCollapsed ? "md:w-16" : "md:w-72"
+        )}
+      >
         <div className="flex flex-col h-full">
           <div className="flex h-14 items-center px-4 border-b border-gray-800">
-            <Link href="/" className="flex items-center gap-2">
-              <GraduationCap className="h-6 w-6 text-white" />
-              <span className="text-xl font-bold text-white">EduBot</span>
-            </Link>
+            <div className="flex items-center justify-between w-full">
+              <Link href="/" className="flex items-center gap-2">
+                <GraduationCap className="h-6 w-6 text-white" />
+                <span className={cn("text-xl font-bold text-white transition-opacity duration-300", 
+                  isCollapsed ? "opacity-0" : "opacity-100"
+                )}>
+                  EduBot
+                </span>
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="text-white"
+              >
+                {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
           <div className="flex-1 flex flex-col overflow-y-auto">
             <nav className="flex-1 px-2 py-4 space-y-2">
@@ -79,14 +101,21 @@ export default function DashboardLayout({
                   )}
                 >
                   <route.icon className={cn("h-5 w-5", route.color)} />
-                  {route.label}
+                  <span className={cn("transition-opacity duration-300",
+                    isCollapsed ? "opacity-0 hidden" : "opacity-100"
+                  )}>
+                    {route.label}
+                  </span>
                 </Link>
               ))}
             </nav>
           </div>
         </div>
       </div>
-      <div className="md:pl-72">
+      <div className={cn(
+        "transition-all duration-300",
+        isCollapsed ? "md:pl-16" : "md:pl-72"
+      )}>
         <div className="flex h-14 items-center px-4 border-b">
           <Button
             variant="ghost"
