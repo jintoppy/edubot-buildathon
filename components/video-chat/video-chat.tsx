@@ -10,14 +10,12 @@ interface VideoChatProps {
   audioToSpeak: any;
   handleAudioProcessed: () => void;
   isMicEnabled?: boolean;
-  onUserSpeech?: (text: string) => void;
 }
 
 export function VideoChat({
   audioToSpeak,
   handleAudioProcessed,
   isMicEnabled = false,
-  onUserSpeech,
 }: VideoChatProps) {
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
   const isSimliInitialised = useRef(false);

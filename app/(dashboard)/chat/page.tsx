@@ -70,6 +70,21 @@ export default function ChatPage() {
     if (room) {
       room.localParticipant?.setMicrophoneEnabled(!isMicEnabled)
     }
+
+    // Listen for Simli transcription when mic is enabled
+    if (!isMicEnabled && room?.simliClient) {
+      room.simliClient.on('transcription', (result: any) => {
+        if (result.text?.trim()) {
+          const userMessage = {
+            id: Date.now().toString(),
+            role: 'user',
+            content: result.text,
+            createdAt: new Date(),
+          };
+          handleNewMessage(userMessage);
+        }
+      });
+    }
   }
 
   if (isConnecting) {
@@ -133,19 +148,6 @@ export default function ChatPage() {
           audioToSpeak={audioToSpeak} 
           handleAudioProcessed={handleAudioProcessed}
           isMicEnabled={isMicEnabled}
-          onUserSpeech={(text) => {
-            // Add user's speech to chat
-            const userMessage = {
-              id: Date.now().toString(),
-              role: 'user',
-              content: text,
-              createdAt: new Date(),
-            };
-            // Update chat messages through ChatSidebar
-            if (text.trim()) {
-              handleNewMessage(userMessage);
-            }
-          }}
         />
         <ChatSidebar 
           onNewMessage={handleNewAIMessage}
