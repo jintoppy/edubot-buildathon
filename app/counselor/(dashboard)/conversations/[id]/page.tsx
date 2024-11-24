@@ -19,6 +19,10 @@ interface ChatSession {
     fullName: string;
     email: string;
   };
+  assignment?: {
+    counselorId: string | null;
+    status: string;
+  };
 }
 
 export default function ConversationPage({
@@ -92,7 +96,9 @@ export default function ConversationPage({
             conversation.user?.fullName || "Unknown"
           }`}
         />
-        <Button onClick={handleAssign}>Self Assign</Button>
+        {(!conversation.assignment?.counselorId) && (
+          <Button onClick={handleAssign}>Self Assign</Button>
+        )}
       </div>
       <ConversationDetails conversation={conversation} />
     </DashboardShell>

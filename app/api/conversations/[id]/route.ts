@@ -35,9 +35,14 @@ export async function GET(
           fullName: users.fullName,
           email: users.email,
         },
+        assignment: {
+          counselorId: counselorAssignments.counselorId,
+          status: counselorAssignments.status,
+        }
       })
       .from(chatSessions)
       .leftJoin(users, eq(chatSessions.studentId, users.id))
+      .leftJoin(counselorAssignments, eq(chatSessions.id, counselorAssignments.conversationId))
       .where(eq(chatSessions.id, conversationId))
       .orderBy(chatSessions.startTime);
 
