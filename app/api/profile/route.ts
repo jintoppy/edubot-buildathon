@@ -1,19 +1,18 @@
-import { auth } from "@clerk/nextjs";
 import { db } from "@/lib/db";
 import { studentProfiles } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { checkAuth } from "@/lib/checkAuth";
 
 export async function GET() {
   try {
-    const { userId } = auth();
-    
-    if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
+    const authResult = await checkAuth();
+    if (authResult.error || !authResult.user) {
+      return NextResponse.json(authResult, { status: 401 });
     }
 
     const profile = await db.query.studentProfiles.findFirst({
-      where: eq(studentProfiles.userId, userId)
+      where: eq(studentProfiles.userId, authResult.user.id)
     });
 
     return NextResponse.json(profile);
