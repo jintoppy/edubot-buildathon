@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatDate } from "@/lib/utils";
+import Link from "next/link";
 
 interface Assignment {
   id: string;
@@ -17,6 +18,7 @@ interface Assignment {
   userEmail: string;
   programName?: string;
   programLevel?: string;
+  chatSessionId?: string;
   chatSessionSummary: string | null;
   chatSessionStartTime: Date;
 }
@@ -45,9 +47,12 @@ export function AssignmentsTable({ assignments }: AssignmentsTableProps) {
             <TableCell>{formatDate(assignment.createdAt)}</TableCell>
             <TableCell>{assignment.chatSessionSummary || "No summary available"}</TableCell>
             <TableCell>
-              <Button variant="outline" size="sm">
-                View Details
-              </Button>
+              {assignment.chatSessionId && (<Link href={`/counselor/conversations/${assignment.chatSessionId}`}>
+                <Button variant="outline" size="sm">
+                  View Details
+                </Button>
+              </Link>)}
+              
             </TableCell>
           </TableRow>
         ))}

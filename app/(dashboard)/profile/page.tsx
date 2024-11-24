@@ -37,6 +37,8 @@ export default async function DashboardProfilePage() {
     return null;
   }
 
+  console.log(userData);
+
   return (
     <DashboardShell>
       <DashboardHeader

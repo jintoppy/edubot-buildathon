@@ -83,7 +83,7 @@ interface ProfileFormProps {
   };
 }
 
-export const ProfileForm = ({ initialData }: ProfileFormProps) => {
+export const ProfileForm = ({ initialData, userData }: ProfileFormProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
 
@@ -103,23 +103,11 @@ export const ProfileForm = ({ initialData }: ProfileFormProps) => {
       otherScore: initialData?.testScores?.other?.score || "",
       workExperience: initialData?.workExperience?.[0]?.description || "",
       interests: initialData?.extraCurricular?.[0]?.activity || "",
-      
-      // Other fields default to empty
-      firstName: "",
-      lastName: "",
-      email: "",
       phone: "",
       nationality: "",
-      highestEducation: "",
       graduationYear: "",
       cgpa: "",
       institute: "",
-      englishTest: "",
-      englishScore: "",
-      otherTest: "",
-      otherScore: "",
-      workExperience: "",
-      interests: "",
       goals: "",
     },
   });

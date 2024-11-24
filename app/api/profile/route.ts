@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { studentProfiles } from "@/lib/db/schema";
+import { studentProfiles, users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { checkAuth } from "@/lib/checkAuth";
@@ -29,20 +29,11 @@ export async function POST(req: Request) {
       return NextResponse.json(authResult, { status: 401 });
     }
 
-    // Get user's UUID from our database
-    const user = await db.query.users.findFirst({
-      where: eq(users.clerkId, authResult.user.id)
-    });
-
-    if (!user) {
-      return new NextResponse("User not found", { status: 404 });
-    }
-
     const data = await req.json();
     
     // Check if profile exists
     const existingProfile = await db.query.studentProfiles.findFirst({
-      where: eq(studentProfiles.userId, user.id)
+      where: eq(studentProfiles.userId, authResult.user.id)
     });
 
     if (existingProfile) {
@@ -53,11 +44,11 @@ export async function POST(req: Request) {
           ...data,
           updatedAt: new Date()
         })
-        .where(eq(studentProfiles.userId, user.id));
+        .where(eq(studentProfiles.userId, authResult.user.id));
     } else {
       // Create new profile
       await db.insert(studentProfiles).values({
-        userId: user.id,
+        userId: authResult.user.id,
         ...data
       });
     }
