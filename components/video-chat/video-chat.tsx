@@ -80,43 +80,16 @@ export function VideoChat({
     };
   }, [isMicEnabled]);
 
-  // Handle audio processing
+  // Listen for Simli transcription results
   useEffect(() => {
-    if (!mediaStream || !isMicEnabled) return;
-
-    const audioContext = new AudioContext();
-    const source = audioContext.createMediaStreamSource(mediaStream);
-    const processor = audioContext.createScriptProcessor(4096, 1, 1);
-
-    source.connect(processor);
-    processor.connect(audioContext.destination);
-
-    processor.onaudioprocess = (e) => {
-      const inputData = e.inputBuffer.getChannelData(0);
-      // Convert Float32Array to Int16Array for compatibility
-      const audioData = new Int16Array(inputData.length);
-      for (let i = 0; i < inputData.length; i++) {
-        audioData[i] = inputData[i] * 32767;
-      }
-      
-      if (simliClientRef.current) {
-        simliClientRef.current.sendAudioData(new Uint8Array(audioData.buffer));
-        
-        // Listen for transcription results
-        simliClientRef.current.on('transcription', (result: any) => {
-          if (result.text && onUserSpeech) {
-            onUserSpeech(result.text);
-          }
-        });
-      }
-    };
-
-    return () => {
-      processor.disconnect();
-      source.disconnect();
-      audioContext.close();
-    };
-  }, [mediaStream, isMicEnabled]);
+    if (simliClientRef.current && isMicEnabled) {
+      simliClientRef.current.on('transcription', (result: any) => {
+        if (result.text && onUserSpeech) {
+          onUserSpeech(result.text);
+        }
+      });
+    }
+  }, [isMicEnabled, onUserSpeech]);
 
   // Handle AI speech
   useEffect(() => {
