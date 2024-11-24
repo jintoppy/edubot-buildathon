@@ -5,18 +5,20 @@ import { GraphStateType } from "../graph";
 export async function createCounselorAssignment(state: GraphStateType) {
   try {
     // Extract relevant information from state
-    const studentId = state.context?.profile?.id || state.context?.studentId;
+    const studentId = state.metadata.userId;
     const programId = state.context?.programs?.[0]?.id;
+    const conversationId = state.metadata.sessionId;
     
-    if (!studentId) {
-      throw new Error("Student ID is required to create counselor assignment");
+    if (!studentId || !conversationId) {
+      throw new Error("Student ID and Conversation ID are required to create counselor assignment");
     }
 
     // Create the assignment
     const assignment = await db.insert(counselorAssignments).values({
       studentId,
       programId: programId || null,
-      status: "open", // From assignmentStatusEnum
+      conversationId,
+      status: "open",
       priority: "medium",
       notes: state.messages.length > 0 
         ? `Last message: ${state.messages[state.messages.length - 1].content}`
