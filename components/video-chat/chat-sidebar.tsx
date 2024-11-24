@@ -3,6 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useUser } from '@clerk/clerk-react';
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send } from "lucide-react";
@@ -30,6 +31,7 @@ export interface ChatSidebarRef {
 export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, ref) => {
   const [input, setInput] = useState("");
   const { toast } = useToast();
+  const { user } = useUser()
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [serverUI, setServerUI] = useState<React.ReactNode | null>(null);
