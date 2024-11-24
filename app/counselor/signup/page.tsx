@@ -2,7 +2,7 @@
 
 import { useSignUp } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -24,7 +24,7 @@ const signupSchema = z.object({
 
 type SignupForm = z.infer<typeof signupSchema>;
 
-export default function CounselorSignup() {
+function CounselorSignup() {
   const searchParams = useSearchParams();
   const { signUp, isLoaded, setActive } = useSignUp();
   const [isLoading, setIsLoading] = useState(false);
@@ -213,4 +213,12 @@ export default function CounselorSignup() {
       </Card>
     </div>
   );
+}
+
+export default function CounselorSignupPage(){
+  return (
+    <Suspense>
+      <CounselorSignup />
+    </Suspense>
+  )
 }

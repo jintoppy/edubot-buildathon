@@ -1,4 +1,8 @@
-import { pgTable, uuid, text, timestamp, jsonb, boolean, real, pgEnum } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { pgTable, uuid, text, timestamp, jsonb, boolean, real, pgEnum, vector } from "drizzle-orm/pg-core";
+
+export const createVectorExtension = sql`CREATE EXTENSION IF NOT EXISTS vector`;
+
 
 export const userRoleEnum = pgEnum("userType", [
   "admin",
@@ -219,6 +223,32 @@ export const documentation = pgTable("documentation", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+export const documentEmbeddings = pgTable("document_embeddings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  
+  // Reference to the documentation table
+  documentId: uuid("document_id")
+    .notNull()
+    .references(() => documentation.id, { onDelete: 'cascade' }),
+  
+  // Embedding vector - using 1536 dimensions for OpenAI's text-embedding-3-small model
+  embedding: vector("embedding", { dimensions: 1536 }).notNull(),
+  
+  // Fields to track embedding metadata
+  modelName: text("model_name").notNull(),      // Name of the embedding model used
+  modelVersion: text("model_version").notNull(), // Version of the embedding model
+  
+  // Audit fields
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const createHNSWIndex = sql`
+  CREATE INDEX ON document_embeddings 
+  USING hnsw (embedding vector_cosine_ops)
+  WITH (m = 16, ef_construction = 64)
+`;
 
 export type DocumentCategory = typeof documentCategoryEnum.enumValues;
 export type AssignmentStatus = typeof assignmentStatusEnum.enumValues;
