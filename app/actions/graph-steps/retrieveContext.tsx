@@ -5,6 +5,7 @@ import { eq, and, like } from 'drizzle-orm';
 import { programs, studentProfiles } from '@/lib/db/schema';
 import { loadVectorStore } from "@/lib/chat-utils";
 import { GraphStateType } from "../graph";
+import { generateEmbedding } from "@/lib/embedding";
 
 const routerModel = new ChatAnthropic({ model: "claude-3-5-sonnet-20241022", temperature: 0 });
 const topK = 3;
@@ -18,8 +19,14 @@ export async function retrieveContext(state: GraphStateType) {
   switch (state.queryType) {
     case 'GENERAL_QUESTION': {
       const query = state.messages[state.messages.length - 1].content;
-      const results = await vectorStore.similaritySearch(query.toString(), topK);
-      context = results;
+      const queryVector = await generateEmbedding(query.toString());
+      if(queryVector.embedding){
+        const results = await vectorStore.similaritySearch(query.toString(), topK);
+        context = results;  
+      }
+      else {
+        context = [];
+      }
       break;
     }
     case 'SPECIFIC_PROGRAM': {
@@ -54,6 +61,9 @@ export async function retrieveContext(state: GraphStateType) {
       break;
     }
   }
+
+  console.log('context');
+  console.log(context);
 
   return {
     ...state,
