@@ -26,6 +26,7 @@ interface SerializedMessage {
   role: "user" | "assistant";
   content: string;
   id: string;
+  sessionId?: string;
 }
 
 // Define the Graph State
@@ -93,11 +94,12 @@ function convertToLangChainMessages(messages: SerializedMessage[]) {
   );
 }
 
-function serializeMessages(messages: (AIMessage | HumanMessage)[]) {
+function serializeMessages(messages: (AIMessage | HumanMessage)[], sessionId: string) {
   return messages.map((msg) => ({
     role: msg instanceof HumanMessage ? "user" : "assistant",
     content: msg.content.toString(),
     id: crypto.randomUUID(),
+    sessionId,
   }));
 }
 
@@ -127,7 +129,7 @@ async function chat(
     )
     .then((result) => {
       return {
-        messages: serializeMessages(result.messages),
+        messages: serializeMessages(result.messages, result.metadata.sessionId),
       };
     });
 }
@@ -164,7 +166,7 @@ export async function chatAction(
       content: input
     });
 
-    const resultPromise = chat(messages, input, userId, uiStream);
+    const resultPromise = chat(messages.map(msg => ({...msg, sessionId})), input, userId, uiStream);
     
     // Handle AI response
     const result = await resultPromise;
