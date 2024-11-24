@@ -2,10 +2,12 @@
 
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
+import { useChat } from "ai/react";
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send } from "lucide-react"
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   id: number
@@ -15,17 +17,33 @@ interface Message {
 }
 
 export function ChatSidebar() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      content: "Hello! I'm your AI educational counselor. How can I help you today?",
-      sender: "ai",
-      timestamp: new Date(),
+  const { toast } = useToast();
+  const { messages, input, setInput, handleInputChange, handleSubmit, isLoading: chatEndpointIsLoading, setMessages } =
+  useChat({
+    initialMessages: [{id: 'init1', content: `Hello! I'm your AI educational counselor. How can I help you today?`, role: 'assistant'}],
+    onResponse(response) {
+      console.log(response);
+      // const sourcesHeader = response.headers.get("x-sources");
+      // const sources = sourcesHeader ? JSON.parse((Buffer.from(sourcesHeader, 'base64')).toString('utf8')) : [];
+      // const messageIndexHeader = response.headers.get("x-message-index");
+      // if (sources.length && messageIndexHeader !== null) {
+      //   setSourcesForMessages({...sourcesForMessages, [messageIndexHeader]: sources});
+      // }
     },
-  ])
-  const [input, setInput] = useState("")
+    onError: (e) => {
+      toast({description: e.message});
+    }
+  });
+  // const [messages, setMessages] = useState<Message[]>([
+  //   {
+  //     id: 1,
+  //     content: "Hello! I'm your AI educational counselor. How can I help you today?",
+  //     sender: "ai",
+  //     timestamp: new Date(),
+  //   },
+  // ])
 
-  const handleSend = () => {
+  const handleSend = (e:any) => {
     if (!input.trim()) return
 
     const newMessage: Message = {
@@ -35,19 +53,21 @@ export function ChatSidebar() {
       timestamp: new Date(),
     }
 
-    setMessages([...messages, newMessage])
-    setInput("")
+    handleSubmit(e);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: Message = {
-        id: messages.length + 2,
-        content: "I understand you're interested in studying abroad. Could you tell me more about your preferred field of study?",
-        sender: "ai",
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, aiResponse])
-    }, 1000)
+    // setMessages([...messages, newMessage])
+    // setInput("")
+
+    // // Simulate AI response
+    // setTimeout(() => {
+    //   const aiResponse: Message = {
+    //     id: messages.length + 2,
+    //     content: "I understand you're interested in studying abroad. Could you tell me more about your preferred field of study?",
+    //     sender: "ai",
+    //     timestamp: new Date(),
+    //   }
+    //   setMessages((prev) => [...prev, aiResponse])
+    // }, 1000)
   }
 
   return (
@@ -61,19 +81,19 @@ export function ChatSidebar() {
             <div
               key={message.id}
               className={`flex ${
-                message.sender === "user" ? "justify-end" : "justify-start"
+                message.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
               <div
                 className={`rounded-lg px-4 py-2 max-w-[80%] ${
-                  message.sender === "user"
+                  message.role === "user"
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted"
                 }`}
               >
                 <p className="text-sm">{message.content}</p>
                 <span className="text-xs opacity-70">
-                  {message.timestamp.toLocaleTimeString()}
+                  {/* {message.createdAt ? message.createdAt?.toLocaleTimeString(): ''} */}
                 </span>
               </div>
             </div>
@@ -86,7 +106,7 @@ export function ChatSidebar() {
             placeholder="Type a message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            onKeyDown={(e) => e.key === "Enter" && handleSend(e)}
           />
           <Button size="icon" onClick={handleSend}>
             <Send className="h-4 w-4" />

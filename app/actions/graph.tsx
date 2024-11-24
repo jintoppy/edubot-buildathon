@@ -150,6 +150,8 @@ async function classifyQueryType(state: GraphStateType) {
     new HumanMessage(lastMessage.content.toString()),
   ]);
 
+  console.log(classification);
+
   return {
     ...state,
     queryType: classification.content.toString().trim(),
@@ -494,7 +496,7 @@ export async function chat(prevMessages: any[], message: string, userId: string)
   const uiStream = createStreamableUI();
   const result = await workflow.compile().stream({
     messages: [...prevMessages, new HumanMessage(message)],
-    currentStep: 'start',
+    currentStep: START,
     uiStream,
     metadata: { userId, sessionId: crypto.randomUUID() },
   },  { configurable: { thread_id: userId } });
