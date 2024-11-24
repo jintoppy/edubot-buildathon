@@ -51,32 +51,6 @@ export function VideoChat({
     }
   }, [audioRef, videoRef, isSimliInitialised]);
 
-  // Handle microphone access
-  useEffect(() => {
-    const setupMicrophone = async () => {
-      try {
-        if (isMicEnabled) {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          setMediaStream(stream);
-        } else {
-          if (mediaStream) {
-            mediaStream.getTracks().forEach(track => track.stop());
-            setMediaStream(null);
-          }
-        }
-      } catch (error) {
-        console.error('Error accessing microphone:', error);
-      }
-    };
-
-    setupMicrophone();
-
-    return () => {
-      if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
-      }
-    };
-  }, [isMicEnabled]);
 
 
   // Handle AI speech

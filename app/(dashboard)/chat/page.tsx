@@ -71,19 +71,36 @@ export default function ChatPage() {
       room.localParticipant?.setMicrophoneEnabled(!isMicEnabled)
     }
 
-    // Listen for Simli transcription when mic is enabled
-    if (!isMicEnabled && room?.simliClient) {
-      room.simliClient.on('transcription', (result: any) => {
-        if (result.text?.trim()) {
+    // Setup speech recognition when mic is enabled
+    if (!isMicEnabled) {
+      const recognition = new (window as any).webkitSpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      
+      recognition.onresult = (event: any) => {
+        const last = event.results.length - 1;
+        const text = event.results[last][0].transcript;
+        
+        if (event.results[last].isFinal) {
           const userMessage = {
             id: Date.now().toString(),
             role: 'user',
-            content: result.text,
+            content: text,
             createdAt: new Date(),
           };
           handleNewMessage(userMessage);
         }
-      });
+      };
+      
+      recognition.start();
+      
+      // Store recognition instance for cleanup
+      (window as any).currentRecognition = recognition;
+    } else {
+      // Stop recognition when mic is disabled
+      if ((window as any).currentRecognition) {
+        (window as any).currentRecognition.stop();
+      }
     }
   }
 
