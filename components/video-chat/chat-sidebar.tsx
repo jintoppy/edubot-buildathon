@@ -71,17 +71,17 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
     return () => document.removeEventListener("click", handleUIActions);
   }, []);
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  const handleSend = async (msg?: string) => {
+    if ((!input.trim() && !msg) || isLoading) return;
 
     try {
       setIsLoading(true);
+      const userInput = msg ?? input;
 
       // Create plain message object
       const userMessage: ExtendedMessage = {
         id: uuid(),
-        content: input,
+        content: userInput,
         role: "user",
         createdAt: new Date(),
       };
@@ -106,7 +106,7 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
         id: msg.id,
       }));
 
-      const combinedResponse = chatAction(serializedMessages, input, "abcd");
+      const combinedResponse = chatAction(serializedMessages, userInput, "abcd");
 
       setServerUI((await combinedResponse).serverUi);
       const response = await (await combinedResponse).resultPromise;
@@ -155,7 +155,9 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
 
   useImperativeHandle(ref, () => ({
     addMessage: (message: ExtendedMessage) => {
-      setMessages(prev => [...prev, message]);
+      setInput(message.content);
+      handleSend(message.content);
+      // setMessages(prev => [...prev, message]);
     }
   }));
 
@@ -207,7 +209,10 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
         </div>
       </ScrollArea>
 
-      <form onSubmit={handleSend} className="p-4 border-t">
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        handleSend();
+      }} className="p-4 border-t">
         <div className="flex gap-2">
           <Input
             placeholder="Type a message..."

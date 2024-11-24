@@ -4,6 +4,7 @@ import { ProgramCard } from "@/components/programs/program-card";
 import { StudentProfileView } from "@/components/profile/student-profile-view";
 import { GraphStateType } from "../graph";
 import { END } from "@langchain/langgraph";
+import Link from "next/link";
 
 const responseModel = new ChatAnthropic({
   model: "claude-3-5-sonnet-20241022",
@@ -263,9 +264,11 @@ export async function generateResponse(
             <li>• Getting program recommendations</li>
             <li>• Connecting with counselors</li>
           </ul>
-          <button className="mt-4 text-blue-500 hover:underline">
-            Browse Popular Programs
-          </button>
+          <a href="/programs">
+            <button className="mt-4 text-blue-500 hover:underline">
+              Browse Popular Programs
+            </button>
+          </a>
         </div>
       );
 
