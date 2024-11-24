@@ -49,9 +49,29 @@ export default function ConversationPage({
     fetchConversation();
   }, [params.id]);
 
-  const handleAssign = () => {
+  const handleAssign = async () => {
+    try {
+      const response = await fetch('/api/assignments/counselor/assign', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          conversationId: params.id,
+        }),
+      });
 
-  }
+      if (!response.ok) {
+        throw new Error('Failed to assign conversation');
+      }
+
+      // Refresh the page or update UI as needed
+      window.location.reload();
+    } catch (error) {
+      console.error('Error assigning conversation:', error);
+      // Handle error (you might want to show a toast notification)
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
