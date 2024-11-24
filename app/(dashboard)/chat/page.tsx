@@ -92,8 +92,20 @@ export default function ChatPage() {
 
   return (
     <div className="h-[calc(100vh-8rem)]">
+      <div className="grid h-full gap-4 md:grid-cols-[512px,1fr]">
+        <VideoChat 
+          audioToSpeak={audioToSpeak} 
+          handleAudioProcessed={handleAudioProcessed}
+          isMicEnabled={isMicEnabled}
+        />
+        <ChatSidebar 
+          onNewMessage={handleNewAIMessage}
+          ref={chatSidebarRef} 
+        />
+      </div>
+      
       <DashboardHeader
-        heading="Video Chat"
+        heading="AI Counselor"
         text="Have a conversation with your AI counselor"
       >
         <div className="flex gap-2">
@@ -123,18 +135,6 @@ export default function ChatPage() {
           </Button>
         </div>
       </DashboardHeader>
-
-      <div className="grid h-full gap-4 md:grid-cols-[512px,1fr]">
-        <VideoChat 
-          audioToSpeak={audioToSpeak} 
-          handleAudioProcessed={handleAudioProcessed}
-          isMicEnabled={isMicEnabled}
-        />
-        <ChatSidebar 
-          onNewMessage={handleNewAIMessage}
-          ref={chatSidebarRef} 
-        />
-      </div>
     </div>
   )
 }
