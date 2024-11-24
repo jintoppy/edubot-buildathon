@@ -18,6 +18,7 @@ interface ExtendedMessage {
   content: string;
   createdAt?: Date;
   ui?: React.ReactNode;
+  sessionId?: string;
 };
 
 type Props = {

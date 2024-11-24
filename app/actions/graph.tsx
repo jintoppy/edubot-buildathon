@@ -12,9 +12,9 @@ import {
   AIMessage,
 } from "@langchain/core/messages";
 import { createStreamableUI } from "ai/rsc";
-import {
-  ProgramInterface,
-} from "@/components/programs/program-card";
+import { db } from "@/lib/db";
+import { chatSessions, chatMessages } from "@/lib/db/schema";
+import { ProgramInterface } from "@/components/programs/program-card";
 import {
   StudentProfileInterface,
 } from "@/components/profile/student-profile-view";
@@ -139,9 +139,56 @@ export async function chatAction(
 ) {
   try {
     const uiStream = createStreamableUI();
+    
+    // Create or get existing chat session
+    let sessionId: string;
+    if (messages.length <= 1) { // Only system message present - new chat
+      const [session] = await db.insert(chatSessions).values({
+        studentId: userId,
+        communicationMode: "text_only",
+        category: "general_query",
+        startTime: new Date(),
+        status: "active"
+      }).returning({ id: chatSessions.id });
+      sessionId = session.id;
+    } else {
+      // Get the existing session ID from the first message
+      sessionId = messages[0].sessionId;
+    }
+
+    // Store user message
+    await db.insert(chatMessages).values({
+      sessionId,
+      userId,
+      messageType: "user_message",
+      content: input
+    });
+
     const resultPromise = chat(messages, input, userId, uiStream);
+    
+    // Handle AI response
+    const result = await resultPromise;
+    const aiMessage = result.messages[result.messages.length - 1];
+    
+    if (aiMessage.role === 'assistant') {
+      await db.insert(chatMessages).values({
+        sessionId,
+        messageType: "bot_message",
+        content: aiMessage.content.toString()
+      });
+    }
+
+    // Add sessionId to messages for future reference
+    const messagesWithSession = {
+      ...result,
+      messages: result.messages.map(msg => ({
+        ...msg,
+        sessionId
+      }))
+    };
+
     return {
-      resultPromise,
+      resultPromise: Promise.resolve(messagesWithSession),
       serverUi: uiStream.value,
     };
   } catch (error) {
