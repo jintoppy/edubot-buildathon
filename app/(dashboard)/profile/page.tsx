@@ -3,7 +3,7 @@ import { DashboardHeader } from "@/components/dashboard/header"
 import { ProfileForm } from "@/components/profile/student-profile-form"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
-import { studentProfiles } from "@/lib/db/schema"
+import { studentProfiles, users } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 
 export default async function DashboardProfilePage() {
@@ -26,6 +26,8 @@ export default async function DashboardProfilePage() {
   const profile = await db.query.studentProfiles.findFirst({
     where: eq(studentProfiles.userId, user.id)
   });
+
+  console.log(profile);
 
   return (
     <DashboardShell>
