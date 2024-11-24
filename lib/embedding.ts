@@ -107,9 +107,16 @@ interface DocumentWithContent {
   description: string | null;
 }
 
+interface Document {
+  pageContent: string;
+  metadata: {
+    documentId: string;
+  };
+}
+
 // Combine and rank search results
 export async function rankAndCombineResults(
-  vectorResults: [{ documentId: string }, number][],
+  vectorResults: [Document, number][],
   textResults: DocumentWithContent[],
   query: string,
 ): Promise<DocumentWithContent[]> {
@@ -118,7 +125,7 @@ export async function rankAndCombineResults(
   // Process vector search results
   for (const [doc, score] of vectorResults) {
     const documentContent = await db.query.documentation.findFirst({
-      where: eq(documentation.id, doc.documentId),
+      where: eq(documentation.id, doc.metadata.documentId),
       columns: {
         id: true,
         title: true,

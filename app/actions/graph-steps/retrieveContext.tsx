@@ -22,7 +22,7 @@ export async function retrieveContext(state: GraphStateType) {
       
       // Vector search
       const queryVector = await generateEmbedding(query.toString());
-      let vectorResults: [{ documentId: string }, number][] = [];
+      let vectorResults: [Document, number][] = [];
       if (queryVector.embedding) {
         vectorResults = await vectorStore.similaritySearchVectorWithScore(queryVector.embedding, topK);
       }
