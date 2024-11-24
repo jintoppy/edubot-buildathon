@@ -7,12 +7,15 @@ import { ChatSidebar } from "@/components/video-chat/chat-sidebar"
 import { DashboardHeader } from "@/components/dashboard/header"
 import { Button } from "@/components/ui/button"
 import { Loader2, Video, VideoOff, Mic, MicOff } from "lucide-react"
+import { textToSpeech } from "@/app/actions/tts"
 
 export default function ChatPage() {
   const [isConnecting, setIsConnecting] = useState(false)
   const [room, setRoom] = useState<Room | null>(null)
   const [isCameraEnabled, setIsCameraEnabled] = useState(true)
   const [isMicEnabled, setIsMicEnabled] = useState(true)
+  const [aiMessageToSpeak, setAiMessageToSpeak] = useState('');
+  const [audioToSpeak, setAudioToSpeak] = useState<any>(null);
 
   useEffect(() => {
     const connectToRoom = async () => {
@@ -71,6 +74,17 @@ export default function ChatPage() {
     )
   }
 
+  const handleNewAIMessage = async (msg: string) => {
+    setAiMessageToSpeak(msg);
+    const audioToSpeak = await textToSpeech(msg);
+    setAudioToSpeak(audioToSpeak);
+  }
+
+  const handleAudioProcessed = () => {
+    setAiMessageToSpeak('');
+    setAudioToSpeak(null);
+  }
+
   return (
     <div className="h-[calc(100vh-8rem)]">
       <DashboardHeader
@@ -106,8 +120,8 @@ export default function ChatPage() {
       </DashboardHeader>
 
       <div className="grid h-full gap-4 md:grid-cols-[1fr,300px]">
-        <VideoChat room={room} />
-        <ChatSidebar />
+        <VideoChat audioToSpeak={audioToSpeak} handleAudioProcessed={handleAudioProcessed} />
+        <ChatSidebar onNewMessage={handleNewAIMessage} />
       </div>
     </div>
   )

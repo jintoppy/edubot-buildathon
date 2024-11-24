@@ -13,14 +13,17 @@ import { cn } from "@/lib/utils";
 
 interface ExtendedMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   createdAt?: Date;
   ui?: React.ReactNode;
 }
 
+type Props = {
+  onNewMessage: (msg: string) => void;
+};
 
-export function ChatSidebar() {
+export function ChatSidebar({ onNewMessage }: Props) {
   const [input, setInput] = useState("");
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -40,28 +43,28 @@ export function ChatSidebar() {
   useEffect(() => {
     const handleUIActions = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const action = target.getAttribute('data-action');
+      const action = target.getAttribute("data-action");
       if (action) {
-        const programId = target.getAttribute('data-program-id');
+        const programId = target.getAttribute("data-program-id");
         switch (action) {
-          case 'learn-more':
+          case "learn-more":
             // Handle learn more
             break;
-          case 'compare':
+          case "compare":
             // Handle compare
             break;
-          case 'enroll':
+          case "enroll":
             // Handle enrollment
             break;
-          case 'refine-search':
+          case "refine-search":
             // Handle search refinement
             break;
         }
       }
     };
-  
-    document.addEventListener('click', handleUIActions);
-    return () => document.removeEventListener('click', handleUIActions);
+
+    document.addEventListener("click", handleUIActions);
+    return () => document.removeEventListener("click", handleUIActions);
   }, []);
 
   const handleSend = async (e: React.FormEvent) => {
@@ -70,7 +73,7 @@ export function ChatSidebar() {
 
     try {
       setIsLoading(true);
-      
+
       // Create plain message object
       const userMessage: ExtendedMessage = {
         id: uuid(),
@@ -78,51 +81,63 @@ export function ChatSidebar() {
         role: "user",
         createdAt: new Date(),
       };
-      setMessages(prev => [...prev, userMessage]);
+      setMessages((prev) => [...prev, userMessage]);
       setInput("");
 
       const loadingId = uuid();
-      setMessages(prev => [...prev, {
-        id: loadingId,
-        content: "",
-        role: "assistant",
-        createdAt: new Date(),
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: loadingId,
+          content: "",
+          role: "assistant",
+          createdAt: new Date(),
+        },
+      ]);
 
       // Convert messages to plain objects
-      const serializedMessages = messages.map(msg => ({
+      const serializedMessages = messages.map((msg) => ({
         role: msg.role,
         content: msg.content,
         id: msg.id,
       }));
 
-      const combinedResponse = chatAction(serializedMessages, input, 'abcd');
+      const combinedResponse = chatAction(serializedMessages, input, "abcd");
 
       setServerUI((await combinedResponse).serverUi);
       const response = await (await combinedResponse).resultPromise;
+      const lastMessage = response.messages[response.messages.length - 1];
+      if(lastMessage.role === 'assistant'){
+        onNewMessage(lastMessage.content.toString());
+      }
+      
 
-      setMessages(prev => {
-        const filtered = prev.filter(m => m.id !== loadingId);
+      setMessages((prev) => {
+        const filtered = prev.filter((m) => m.id !== loadingId);
         if (response.messages[response.messages.length - 1]) {
           const lastMessage = response.messages[response.messages.length - 1];
-          return [...filtered, {
-            id: uuid(),
-            content: lastMessage.content,
-            role: 'assistant',
-            createdAt: new Date()
-          }];
+          return [
+            ...filtered,
+            {
+              id: uuid(),
+              content: lastMessage.content,
+              role: "assistant",
+              createdAt: new Date(),
+            },
+          ];
         }
         return filtered;
       });
-
     } catch (error) {
-      console.error('Chat error:', error);
+      console.error("Chat error:", error);
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",
         variant: "destructive",
       });
-      setMessages(prev => prev.filter(m => m.id !== prev[prev.length - 1].id));
+      setMessages((prev) =>
+        prev.filter((m) => m.id !== prev[prev.length - 1].id)
+      );
     } finally {
       setIsLoading(false);
     }
@@ -139,11 +154,8 @@ export function ChatSidebar() {
       <div className="p-4 border-b">
         <h3 className="font-semibold">Educational Counselor</h3>
       </div>
-      
-      <ScrollArea 
-        ref={scrollAreaRef} 
-        className="flex-1 p-4"
-      >
+
+      <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
         <div className="space-y-4">
           {messages.map((message, i) => (
             <div
@@ -156,8 +168,8 @@ export function ChatSidebar() {
               <div
                 className={cn(
                   "rounded-lg px-4 py-2 max-w-[85%] space-y-2",
-                  message.role === "user" 
-                    ? "bg-primary text-primary-foreground" 
+                  message.role === "user"
+                    ? "bg-primary text-primary-foreground"
                     : "bg-muted"
                 )}
               >
@@ -185,10 +197,7 @@ export function ChatSidebar() {
         </div>
       </ScrollArea>
 
-      <form 
-        onSubmit={handleSend}
-        className="p-4 border-t"
-      >
+      <form onSubmit={handleSend} className="p-4 border-t">
         <div className="flex gap-2">
           <Input
             placeholder="Type a message..."
@@ -197,15 +206,12 @@ export function ChatSidebar() {
             disabled={isLoading}
             className="flex-1"
           />
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             size="icon"
             disabled={isLoading || !input.trim()}
           >
-            <Send className={cn(
-              "h-4 w-4",
-              isLoading && "animate-spin"
-            )} />
+            <Send className={cn("h-4 w-4", isLoading && "animate-spin")} />
           </Button>
         </div>
       </form>
