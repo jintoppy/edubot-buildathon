@@ -110,9 +110,9 @@ export default function DashboardLayout({
                       : "text-zinc-400"
                   )}
                 >
-                  <route.icon className={cn("h-5 w-5", route.color)} />
-                  <span className={cn("transition-opacity duration-300",
-                    isCollapsed && !isExpanded ? "opacity-0" : "opacity-100"
+                  <route.icon className={cn("h-5 w-5 flex-shrink-0", route.color)} />
+                  <span className={cn("transition-opacity duration-300 flex-1",
+                    isCollapsed && !isExpanded ? "opacity-0 w-0" : "opacity-100"
                   )}>
                     {route.label}
                   </span>
