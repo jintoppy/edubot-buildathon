@@ -80,20 +80,10 @@ export function VideoChat({
     };
   }, [isMicEnabled]);
 
-  // Listen for Simli transcription results
-  useEffect(() => {
-    if (simliClientRef.current && isMicEnabled) {
-      simliClientRef.current.on('transcription', (result: any) => {
-        if (result.text && onUserSpeech) {
-          onUserSpeech(result.text);
-        }
-      });
-    }
-  }, [isMicEnabled, onUserSpeech]);
 
   // Handle AI speech
   useEffect(() => {
-    if (audioToSpeak && !isMicEnabled) {
+    if (audioToSpeak) {
       const audioArray = new Uint8Array(audioToSpeak);
       console.log("audioArray", audioArray);
       console.log("audioArray length", audioArray.length);
