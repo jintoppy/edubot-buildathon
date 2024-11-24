@@ -63,7 +63,7 @@ export default function DashboardLayout({
       <div 
         className={cn(
           "hidden h-full md:flex md:flex-col md:fixed md:inset-y-0 bg-gray-900 transition-all duration-300",
-          isCollapsed ? "md:w-16" : "md:w-72"
+          isCollapsed ? "md:w-16 hover:w-72 group" : "md:w-72"
         )}
       >
         <div className="flex flex-col h-full">
@@ -72,7 +72,7 @@ export default function DashboardLayout({
               <Link href="/" className="flex items-center gap-2">
                 <GraduationCap className="h-6 w-6 text-white" />
                 <span className={cn("text-xl font-bold text-white transition-opacity duration-300", 
-                  isCollapsed ? "opacity-0" : "opacity-100"
+                  isCollapsed ? "opacity-0 group-hover:opacity-100" : "opacity-100"
                 )}>
                   EduBot
                 </span>
@@ -102,7 +102,7 @@ export default function DashboardLayout({
                 >
                   <route.icon className={cn("h-5 w-5", route.color)} />
                   <span className={cn("transition-opacity duration-300",
-                    isCollapsed ? "opacity-0 hidden" : "opacity-100"
+                    isCollapsed ? "opacity-0 group-hover:opacity-100 group-hover:inline" : "opacity-100"
                   )}>
                     {route.label}
                   </span>
