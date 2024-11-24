@@ -111,8 +111,17 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-8rem)]">
-      <div className="grid h-full gap-4 md:grid-cols-[512px,1fr]">
+    <div className="h-[calc(100vh-8rem)] flex flex-col">
+      {programName && (
+        <div className="mb-4">
+          <DashboardHeader
+            heading={`Consultation on ${programName}`}
+            text="Have a detailed discussion about your selected program"
+          />
+        </div>
+      )}
+      
+      <div className="grid flex-1 gap-4 md:grid-cols-[512px,1fr]">
         <VideoChat 
           audioToSpeak={audioToSpeak} 
           handleAudioProcessed={handleAudioProcessed}
@@ -123,38 +132,41 @@ export default function ChatPage() {
           ref={chatSidebarRef} 
         />
       </div>
-      
-      <DashboardHeader
-        heading={programName ? `Consultation on ${programName}` : "AI Counselor"}
-        text="Have a conversation with your AI counselor"
-      >
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={toggleCamera}
-            className={!isCameraEnabled ? "bg-muted" : ""}
-          >
-            {isCameraEnabled ? (
-              <Video className="h-4 w-4" />
-            ) : (
-              <VideoOff className="h-4 w-4" />
-            )}
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={toggleMic}
-            className={!isMicEnabled ? "bg-muted" : ""}
-          >
-            {isMicEnabled ? (
-              <Mic className="h-4 w-4" />
-            ) : (
-              <MicOff className="h-4 w-4" />
-            )}
-          </Button>
+
+      <div className="mt-4 flex items-center justify-between">
+        <DashboardHeader
+          heading="AI Counselor"
+          text="Educational Guidance Expert"
+        />
+        <div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={toggleCamera}
+              className={!isCameraEnabled ? "bg-muted" : ""}
+            >
+              {isCameraEnabled ? (
+                <Video className="h-4 w-4" />
+              ) : (
+                <VideoOff className="h-4 w-4" />
+              )}
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={toggleMic}
+              className={!isMicEnabled ? "bg-muted" : ""}
+            >
+              {isMicEnabled ? (
+                <Mic className="h-4 w-4" />
+              ) : (
+                <MicOff className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
         </div>
-      </DashboardHeader>
+      </div>
     </div>
   )
 }
