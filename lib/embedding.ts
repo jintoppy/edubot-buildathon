@@ -75,3 +75,14 @@ export async function updateEmbedding(documentId: string, embeddingData: number[
     throw error;
   }
 }
+
+// Function to generate query embedding for similarity search
+export async function generateQueryEmbedding(query: string) {
+  const result = await generateEmbedding(query);
+  
+  if (result.error || !result.embedding) {
+    throw new Error('Failed to generate query embedding');
+  }
+
+  return result.embedding;
+}
