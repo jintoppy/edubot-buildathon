@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useUser } from '@clerk/clerk-react';
@@ -31,7 +31,8 @@ export interface ChatSidebarRef {
 export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, ref) => {
   const [input, setInput] = useState("");
   const { toast } = useToast();
-  const { user } = useUser()
+  const { user } = useUser();
+  const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [serverUI, setServerUI] = useState<React.ReactNode | null>(null);
@@ -45,6 +46,30 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
       createdAt: new Date(),
     },
   ]);
+
+  const fetchUserId = useCallback(async (clerkId: string) => {
+    try {
+      const response = await fetch(`/api/users/get-id?clerkId=${clerkId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch user ID');
+      }
+      const data = await response.json();
+      setUserId(data.userId);
+    } catch (error) {
+      console.error('Error fetching user ID:', error);
+      toast({
+        title: "Error",
+        description: "Failed to initialize chat. Please try again.",
+        variant: "destructive",
+      });
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchUserId(user.id);
+    }
+  }, [user?.id, fetchUserId]);
 
   useEffect(() => {
     const handleUIActions = (e: MouseEvent) => {
@@ -108,7 +133,11 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
         id: msg.id,
       }));
 
-      const combinedResponse = chatAction(serializedMessages, userInput, "abcd");
+      if (!userId) {
+        throw new Error("User ID not available");
+      }
+      
+      const combinedResponse = chatAction(serializedMessages, userInput, userId);
 
       setServerUI((await combinedResponse).serverUi);
       const response = await (await combinedResponse).resultPromise;
