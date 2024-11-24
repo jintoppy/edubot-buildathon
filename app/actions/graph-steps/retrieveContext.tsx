@@ -5,7 +5,7 @@ import { eq, and, like } from 'drizzle-orm';
 import { programs, studentProfiles } from '@/lib/db/schema';
 import { loadVectorStore } from "@/lib/chat-utils";
 import { GraphStateType } from "../graph";
-import { generateEmbedding } from "@/lib/embedding";
+import { generateEmbedding, rankAndCombineResults } from "@/lib/embedding";
 
 const routerModel = new ChatAnthropic({ model: "claude-3-5-sonnet-20241022", temperature: 0 });
 const topK = 3;
