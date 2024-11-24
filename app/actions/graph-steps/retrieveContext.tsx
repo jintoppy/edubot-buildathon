@@ -21,8 +21,8 @@ export async function retrieveContext(state: GraphStateType) {
       const query = state.messages[state.messages.length - 1].content;
       const queryVector = await generateEmbedding(query.toString());
       if(queryVector.embedding){
-        const results = await vectorStore.similaritySearch(query.toString(), topK);
-        context = results;  
+        const results = await vectorStore.similaritySearchVectorWithScore(queryVector.embedding, topK);
+        context = results.map(([doc, score]) => doc);
       }
       else {
         context = [];
