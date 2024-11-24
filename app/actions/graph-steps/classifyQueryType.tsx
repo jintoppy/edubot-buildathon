@@ -6,7 +6,6 @@ const routerModel = new ChatAnthropic({ model: "claude-3-5-sonnet-20241022", tem
 
 export async function classifyQueryType(state: GraphStateType) {
     console.log('STEP: classifyQueryType');
-    console.log(state);
     const lastMessage = state.messages[state.messages.length - 1];
     state.uiStream.update(<p className="text-gray-500">Understanding your query...</p>);
   
@@ -22,6 +21,8 @@ export async function classifyQueryType(state: GraphStateType) {
       `),
       new HumanMessage(lastMessage.content.toString()),
     ]);
+
+    console.log('classification.content', classification.content);
   
     return {
       ...state,

@@ -77,7 +77,7 @@ const workflow = new StateGraph(GraphState)
   .addNode("generate_response", generateResponse)
   .addEdge(START, "classify_query")
   .addConditionalEdges("classify_query", (state) =>
-    state.queryType === "IRRELEVANT" ? END : "retrieve_context"
+    state.queryType === "IRRELEVANT" ? "generate_response" : "retrieve_context"
   )
   .addEdge("retrieve_context", "generate_response")
   .addEdge("generate_response", END);

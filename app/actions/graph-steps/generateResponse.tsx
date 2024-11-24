@@ -3,6 +3,7 @@ import { AIMessage, SystemMessage } from "@langchain/core/messages";
 import { ProgramCard } from "@/components/programs/program-card";
 import { StudentProfileView } from "@/components/profile/student-profile-view";
 import { GraphStateType } from "../graph";
+import { END } from "@langchain/langgraph";
 
 const responseModel = new ChatAnthropic({
   model: "claude-3-5-sonnet-20241022",
@@ -12,14 +13,14 @@ const responseModel = new ChatAnthropic({
 export async function generateResponse(
   state: GraphStateType
 ): Promise<Partial<GraphStateType>> {
-  if (!state.queryType || !state.context) {
+  if (!state.queryType) {
     return {
       messages: [
         new AIMessage(
           "I'm sorry, but I couldn't process your request properly. Could you please try again?"
         ),
       ],
-      currentStep: "end_chat",
+      currentStep: END,
     };
   }
 
@@ -37,7 +38,7 @@ export async function generateResponse(
         new SystemMessage(`
             Answer the query using this context. Be concise but informative. 
             Format the response to be easily readable.
-            Context: ${JSON.stringify(state.context.generalInfo)}
+            Context: ${state.context?.generalInfo ? JSON.stringify(state.context.generalInfo): 'No Context available'}
           `),
         ...state.messages,
       ]);
@@ -60,7 +61,7 @@ export async function generateResponse(
     }
 
     case "SPECIFIC_PROGRAM": {
-      const program = state.context.programs?.[0];
+      const program = state.context && state.context.programs && state.context.programs.length > 0 ? state.context.programs?.[0] : null;
       if (!program) {
         state.uiStream.done(
           <div className="text-yellow-600">
@@ -129,6 +130,21 @@ export async function generateResponse(
     }
 
     case "RECOMMENDATION_REQUEST": {
+      if(!state.context){
+        state.uiStream.done(
+          <div className="text-yellow-600">
+            No Info available
+          </div>
+        );
+        return {
+          messages: [
+            new AIMessage(
+              "I need more information to make personalized recommendations. Please tell me more about  yourself"
+            ),
+          ],
+          currentStep: "response_generated",
+        };
+      }
       const { profile, programs: recommendations } = state.context;
       if (!profile || !recommendations?.length) {
         state.uiStream.done(
@@ -231,7 +247,7 @@ export async function generateResponse(
             "I'll help you connect with a human counselor who can provide personalized guidance."
           ),
         ],
-        currentStep: "end_chat",
+        currentStep: END,
       };
     }
 
@@ -259,7 +275,7 @@ export async function generateResponse(
             "I can help you with educational guidance. What would you like to know about our programs?"
           ),
         ],
-        currentStep: "end_chat",
+        currentStep: END,
       };
     }
 
@@ -270,7 +286,7 @@ export async function generateResponse(
             "I'm not sure how to help with that. Could you please rephrase your question?"
           ),
         ],
-        currentStep: "end_chat",
+        currentStep: END,
       };
     }
   }

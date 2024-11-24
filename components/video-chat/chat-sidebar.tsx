@@ -17,7 +17,7 @@ interface ExtendedMessage {
   content: string;
   createdAt?: Date;
   ui?: React.ReactNode;
-});
+};
 
 type Props = {
   onNewMessage: (msg: string) => void;
@@ -227,4 +227,6 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
       </form>
     </Card>
   );
-}
+})
+
+ChatSidebar.displayName = 'ChatSidebar';

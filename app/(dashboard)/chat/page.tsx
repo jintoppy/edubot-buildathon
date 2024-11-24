@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Room, RoomEvent, VideoPresets } from "livekit-client"
+import { useEffect, useRef, useState } from "react"
 import { VideoChat } from "@/components/video-chat/video-chat"
 import { ChatSidebar } from "@/components/video-chat/chat-sidebar"
 import { DashboardHeader } from "@/components/dashboard/header"
@@ -18,47 +17,10 @@ export default function ChatPage() {
     }
   };
   const [isConnecting, setIsConnecting] = useState(false)
-  const [room, setRoom] = useState<Room | null>(null)
   const [isCameraEnabled, setIsCameraEnabled] = useState(true)
   const [isMicEnabled, setIsMicEnabled] = useState(true)
   const [aiMessageToSpeak, setAiMessageToSpeak] = useState('');
   const [audioToSpeak, setAudioToSpeak] = useState<any>(null);
-
-  useEffect(() => {
-    const connectToRoom = async () => {
-      try {
-        setIsConnecting(true)
-        // In production, fetch token from your API
-        const room = new Room({
-          adaptiveStream: true,
-          dynacast: true,
-          videoCaptureDefaults: {
-            resolution: VideoPresets.h720.resolution,
-          },
-        })
-
-        room.on(RoomEvent.Connected, () => {
-          console.log("connected to room")
-        })
-
-        room.on(RoomEvent.Disconnected, () => {
-          console.log("disconnected from room")
-        })
-
-        setRoom(room)
-      } catch (error) {
-        console.error("Error connecting to room:", error)
-      } finally {
-        setIsConnecting(false)
-      }
-    }
-
-    connectToRoom()
-
-    return () => {
-      room?.disconnect()
-    }
-  }, [])
 
   const toggleCamera = () => {
     setIsCameraEnabled(!isCameraEnabled)
@@ -67,9 +29,6 @@ export default function ChatPage() {
 
   const toggleMic = () => {
     setIsMicEnabled(!isMicEnabled)
-    if (room) {
-      room.localParticipant?.setMicrophoneEnabled(!isMicEnabled)
-    }
 
     // Setup speech recognition when mic is enabled
     if (!isMicEnabled) {
@@ -116,10 +75,15 @@ export default function ChatPage() {
   }
 
   const handleNewAIMessage = async (msg: string) => {
+    console.log('handleNewAIMessage', msg);
     setAiMessageToSpeak(msg);
     const audioToSpeak = await textToSpeech(msg);
-    setAudioToSpeak(audioToSpeak);
+    if(audioToSpeak && audioToSpeak.success){
+      setAudioToSpeak(audioToSpeak.audioData);
+    }
   }
+
+  
 
   const handleAudioProcessed = () => {
     setAiMessageToSpeak('');
