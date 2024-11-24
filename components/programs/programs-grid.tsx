@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   Dialog,
@@ -135,7 +136,13 @@ const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetai
                 </Badge>
               </div>
               <div className="flex flex-col md:flex-row gap-2">
-                <Button className="flex-1">Enroll Now</Button>
+                <Button 
+                  className="flex-1"
+                  onClick={() => handleEnroll(program.id)}
+                  disabled={enrolling === program.id}
+                >
+                  {enrolling === program.id ? 'Enrolling...' : 'Enroll Now'}
+                </Button>
                 <Button variant="outline" className="flex items-center gap-2">
                   <Video className="h-4 w-4" />
                   Schedule Consultation
@@ -145,7 +152,13 @@ const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetai
           </DialogContent>
         </Dialog>
         <div className="flex gap-2 w-full">
-          <Button className="flex-1">Enroll</Button>
+          <Button 
+            className="flex-1" 
+            onClick={() => handleEnroll(program.id)}
+            disabled={enrolling === program.id}
+          >
+            {enrolling === program.id ? 'Enrolling...' : 'Enroll'}
+          </Button>
           <Button variant="outline" className="flex items-center gap-2">
             <Video className="h-4 w-4" />
             Consult
@@ -161,6 +174,46 @@ export const ProgramsGrid = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+  const [enrolling, setEnrolling] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleEnroll = async (programId: string) => {
+    try {
+      setEnrolling(programId);
+      const response = await fetch('/api/programs/enrol', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          programId,
+          notes: 'Enrollment request from program listing'
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to enroll in program');
+      }
+
+      toast({
+        title: "Success!",
+        description: "Your enrollment request has been submitted.",
+        duration: 5000,
+      });
+    } catch (err) {
+      console.error('Error enrolling in program:', err);
+      toast({
+        title: "Error",
+        description: err instanceof Error ? err.message : 'Failed to enroll in program',
+        variant: "destructive",
+        duration: 5000,
+      });
+    } finally {
+      setEnrolling(null);
+    }
+  };
 
   const handleViewDetails = async (programId: string) => {
     try {
