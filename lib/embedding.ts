@@ -1,24 +1,22 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { documentEmbeddings } from "@/lib/db/schema";
-import OpenAI from 'openai';
+import { OpenAIEmbeddings } from "@langchain/openai";
 
 // Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const embeddings = new OpenAIEmbeddings({
+  dimensions: 1536,
+  model: 'text-embedding-3-small',
 });
 
 // Function to generate embeddings for a text
 export async function generateEmbedding(text: string) {
   try {
-    const response = await openai.embeddings.create({
-      input: text,
-      model: "text-embedding-3-small"
-    });
+    const response = await embeddings.embedQuery(text);
     
     return {
-      embedding: response.data[0].embedding,
-      model: response.model,
+      embedding: response,
+      model: 'text-embedding-3-small',
       error: null
     };
   } catch (error) {
