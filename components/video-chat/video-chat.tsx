@@ -4,7 +4,7 @@ import { Room } from "livekit-client";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SimliClient } from "simli-client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface VideoChatProps {
   audioToSpeak: any;
