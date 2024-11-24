@@ -7,11 +7,15 @@ import {
   LayoutDashboard, 
   Video, 
   GraduationCap, 
-  UserCircle,
   Menu,
+  ChartArea,
   ChevronLeft,
   ChevronRight,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Settings,
+  Files,
+  BotMessageSquare,
+  SquareLibrary
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -23,37 +27,37 @@ const routes = [
     icon: LayoutDashboard,
     href: '/admin',
     color: "text-sky-500"
-  },
+  },  
   {
     label: 'Program Management',
-    icon: Video,
+    icon: SquareLibrary,
     href: '/admin/program-management',
     color: "text-violet-500",
   },
   {
     label: 'Analytics',
-    icon: Video,
+    icon: ChartArea,
     href: '/admin/analytics',
     color: "text-violet-500",
   },
   {
     label: 'Conversations',
-    icon: Video,
+    icon: BotMessageSquare,
     href: '/admin/conversations',
     color: "text-violet-500",
   },
   {
     label: 'Data',
-    icon: Video,
+    icon: Files,
     href: '/admin/data',
     color: "text-violet-500",
   },
-  {
-    label: 'Settings',
-    icon: Video,
-    href: '/admin/settings',
-    color: "text-violet-500",
-  },
+  // {
+  //   label: 'Settings',
+  //   icon: Settings,
+  //   href: '/admin/settings',
+  //   color: "text-violet-500",
+  // },
 ]
 
 export default function DashboardLayout({

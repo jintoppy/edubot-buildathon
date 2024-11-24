@@ -50,6 +50,13 @@
       "when": 1732411942063,
       "tag": "0006_little_thena",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1732472572416,
+      "tag": "0007_lumpy_caretaker",
+      "breakpoints": true
     }
   ]
 }

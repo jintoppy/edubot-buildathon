@@ -73,20 +73,8 @@ export function VideoChat({
   return (
     <Card className="flex flex-col h-[512px] overflow-hidden">
       <div className="relative flex-1 bg-muted">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <Avatar className="h-24 w-24 mx-auto mb-4">
-              <AvatarImage src="/ai-counselor.png" />
-              <AvatarFallback>AI</AvatarFallback>
-            </Avatar>
-            <h3 className="text-lg font-semibold">AI Counselor</h3>
-            <p className="text-sm text-muted-foreground">
-              Educational Guidance Expert
-            </p>
-          </div>
-        </div>
         {/* Video elements will be inserted here by LiveKit */}
-        <div id="video-container" className="h-full">
+        <div id="video-container" className="h-full flex items-center flex-col">
           <video ref={videoRef} autoPlay playsInline></video>
           <audio ref={audioRef} autoPlay></audio>
         </div>

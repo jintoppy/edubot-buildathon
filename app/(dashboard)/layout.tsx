@@ -11,7 +11,8 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
-  PanelLeftOpen
+  PanelLeftOpen,
+  BotMessageSquare
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -38,7 +39,7 @@ const routes = [
   },
   {
     label: 'My Conversations',
-    icon: GraduationCap,
+    icon: BotMessageSquare,
     href: '/conversations',
     color: "text-pink-700",
   },

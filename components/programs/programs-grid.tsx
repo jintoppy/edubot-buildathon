@@ -1,9 +1,18 @@
-'use client';
+//@ts-nocheck
 
-import React, { useEffect, useState } from 'react';
+"use client";
+
+import React, { FC, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, GraduationCap, Clock, Video } from "lucide-react";
+import Link from "next/link";
 
 // Types
 interface Program {
@@ -39,13 +49,24 @@ interface Program {
   updatedAt: string;
 }
 
+type ProgramCardProps = {
+  program: Program;
+  onViewDetails: (id: string) => void;
+  enrolling: string | null;
+  handleEnroll: (programId: string) => void;
+};
 
-const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetails: (id: string) => void }) => {
+const ProgramCard: FC<ProgramCardProps> = ({
+  program,
+  enrolling,
+  onViewDetails,
+  handleEnroll,
+}) => {
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="space-y-2">
-        <img 
-          src={program.imageUrl} 
+        <img
+          src={program.imageUrl}
           alt={program.title}
           className="w-full h-48 object-cover rounded-md"
         />
@@ -66,8 +87,8 @@ const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetai
       <CardFooter className="flex flex-col space-y-2">
         <Dialog>
           <DialogTrigger asChild>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="w-full"
               onClick={() => onViewDetails(program.id)}
             >
@@ -90,7 +111,7 @@ const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetai
                   <span>Country: {program.country}</span>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <h4 className="font-semibold">Description</h4>
                 <p className="text-sm text-gray-600">{program.description}</p>
@@ -100,24 +121,37 @@ const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetai
                 <h4 className="font-semibold">Eligibility Criteria</h4>
                 {program.eligibilityCriteria?.academicRequirements && (
                   <div>
-                    <h5 className="text-sm font-medium">Academic Requirements:</h5>
+                    <h5 className="text-sm font-medium">
+                      Academic Requirements:
+                    </h5>
                     <ul className="list-disc list-inside space-y-1">
-                      {program.eligibilityCriteria.academicRequirements.map((req, index) => (
-                        <li key={index} className="text-sm">{req}</li>
-                      ))}
+                      {program.eligibilityCriteria.academicRequirements.map(
+                        (req, index) => (
+                          <li key={index} className="text-sm">
+                            {req}
+                          </li>
+                        )
+                      )}
                     </ul>
                   </div>
                 )}
-                
+
                 {program.eligibilityCriteria?.languageRequirements && (
                   <div>
-                    <h5 className="text-sm font-medium">Language Requirements:</h5>
+                    <h5 className="text-sm font-medium">
+                      Language Requirements:
+                    </h5>
                     <ul className="list-disc list-inside space-y-1">
-                      {Object.keys(program.eligibilityCriteria.languageRequirements)?.map((courseKey:string, index:number) => (
-                        <li key={index} className="text-sm">
-                          {courseKey}: Minimum score {program.eligibilityCriteria?.languageRequirements ? program.eligibilityCriteria?.languageRequirements[courseKey] : ''}
-                        </li>
-                      ))}
+                      {Object.entries(
+                        program.eligibilityCriteria.languageRequirements
+                      )?.map((requirementEntry, index: number) => {
+                        const [courseKey, minScore] = requirementEntry;
+                        return (
+                          <li key={index} className="text-sm">
+                            {courseKey}: Minimum score {minScore}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 )}
@@ -125,7 +159,9 @@ const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetai
                 {program.eligibilityCriteria?.workExperience && (
                   <div>
                     <h5 className="text-sm font-medium">Work Experience:</h5>
-                    <p className="text-sm">{program.eligibilityCriteria.workExperience}</p>
+                    <p className="text-sm">
+                      {program.eligibilityCriteria.workExperience}
+                    </p>
                   </div>
                 )}
               </div>
@@ -136,12 +172,12 @@ const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetai
                 </Badge>
               </div>
               <div className="flex flex-col md:flex-row gap-2">
-                <Button 
+                <Button
                   className="flex-1"
                   onClick={() => handleEnroll(program.id)}
                   disabled={enrolling === program.id}
                 >
-                  {enrolling === program.id ? 'Enrolling...' : 'Enroll Now'}
+                  {enrolling === program.id ? "Enrolling..." : "Enroll Now"}
                 </Button>
                 <Button variant="outline" className="flex items-center gap-2">
                   <Video className="h-4 w-4" />
@@ -152,17 +188,19 @@ const ProgramCard = ({ program, onViewDetails }: { program: Program; onViewDetai
           </DialogContent>
         </Dialog>
         <div className="flex gap-2 w-full">
-          <Button 
-            className="flex-1" 
+          <Button
+            className="flex-1"
             onClick={() => handleEnroll(program.id)}
             disabled={enrolling === program.id}
           >
-            {enrolling === program.id ? 'Enrolling...' : 'Enroll'}
+            {enrolling === program.id ? "Enrolling..." : "Enroll"}
           </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Video className="h-4 w-4" />
-            Consult
-          </Button>
+          <Link href={`/chat?programId=${program.id}`}>
+            <Button variant="outline" className="flex items-center gap-2">
+              <Video className="h-4 w-4" />
+              Consult
+            </Button>
+          </Link>
         </div>
       </CardFooter>
     </Card>
@@ -180,21 +218,21 @@ export const ProgramsGrid = () => {
   const handleEnroll = async (programId: string) => {
     try {
       setEnrolling(programId);
-      const response = await fetch('/api/programs/enrol', {
-        method: 'POST',
+      const response = await fetch("/api/programs/enrol", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           programId,
-          notes: 'Enrollment request from program listing'
+          notes: "Enrollment request from program listing",
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to enroll in program');
+        throw new Error(data.error || "Failed to enroll in program");
       }
 
       toast({
@@ -203,10 +241,11 @@ export const ProgramsGrid = () => {
         duration: 5000,
       });
     } catch (err) {
-      console.error('Error enrolling in program:', err);
+      console.error("Error enrolling in program:", err);
       toast({
         title: "Error",
-        description: err instanceof Error ? err.message : 'Failed to enroll in program',
+        description:
+          err instanceof Error ? err.message : "Failed to enroll in program",
         variant: "destructive",
         duration: 5000,
       });
@@ -219,26 +258,28 @@ export const ProgramsGrid = () => {
     try {
       const response = await fetch(`/api/programs/${programId}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch program details');
+        throw new Error("Failed to fetch program details");
       }
       const data = await response.json();
       setSelectedProgram(data);
     } catch (err) {
-      console.error('Error fetching program details:', err);
+      console.error("Error fetching program details:", err);
     }
   };
 
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
-        const response = await fetch('/api/programs');
+        const response = await fetch("/api/programs");
         if (!response.ok) {
-          throw new Error('Failed to fetch programs');
+          throw new Error("Failed to fetch programs");
         }
         const data = await response.json();
         setPrograms(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch programs');
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch programs"
+        );
       } finally {
         setLoading(false);
       }
@@ -258,10 +299,14 @@ export const ProgramsGrid = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {programs.map((program) => (
-        <ProgramCard 
-          key={program.id} 
-          program={selectedProgram?.id === program.id ? selectedProgram : program}
+        <ProgramCard
+          key={program.id}
+          program={
+            selectedProgram?.id === program.id ? selectedProgram : program
+          }
           onViewDetails={handleViewDetails}
+          handleEnroll={handleEnroll}
+          enrolling={enrolling}
         />
       ))}
     </div>
