@@ -107,9 +107,9 @@ interface DocumentWithContent {
   description: string | null;
 }
 
-interface Document {
+interface Document<T extends Record<string, any> = Record<string, any>> {
   pageContent: string;
-  metadata: {
+  metadata: T & {
     documentId: string;
   };
 }
