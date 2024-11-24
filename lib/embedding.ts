@@ -107,16 +107,11 @@ interface DocumentWithContent {
   description: string | null;
 }
 
-interface Document<T extends Record<string, any> = Record<string, any>> {
-  pageContent: string;
-  metadata: T & {
-    documentId: string;
-  };
-}
+import { Document } from "@langchain/core/documents";
 
 // Combine and rank search results
 export async function rankAndCombineResults(
-  vectorResults: [Document, number][],
+  vectorResults: [Document<Record<string, any>>, number][],
   textResults: DocumentWithContent[],
   query: string,
 ): Promise<DocumentWithContent[]> {
@@ -136,7 +131,7 @@ export async function rankAndCombineResults(
     });
 
     if (documentContent) {
-      scoredResults.set(doc.documentId, {
+      scoredResults.set(doc.metadata.documentId, {
         doc: {
           id: documentContent.id,
           documentId: doc.documentId,
