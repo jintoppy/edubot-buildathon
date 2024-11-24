@@ -23,11 +23,19 @@ export default async function DashboardProfilePage() {
   }
   
   // Fetch existing profile if it exists
-  const profile = await db.query.studentProfiles.findFirst({
-    where: eq(studentProfiles.userId, user.id)
-  });
+  // Fetch both profile and user data
+  const [profile, userData] = await Promise.all([
+    db.query.studentProfiles.findFirst({
+      where: eq(studentProfiles.userId, user.id)
+    }),
+    db.query.users.findFirst({
+      where: eq(users.id, user.id)
+    })
+  ]);
 
-  console.log(profile);
+  if (!userData) {
+    return null;
+  }
 
   return (
     <DashboardShell>
@@ -35,7 +43,14 @@ export default async function DashboardProfilePage() {
         heading="Profile"
         text="Complete your profile to get personalized program recommendations"
       />
-      <ProfileForm initialData={profile} />
+      <ProfileForm 
+        initialData={profile} 
+        userData={{
+          firstName: userData.fullName.split(' ')[0],
+          lastName: userData.fullName.split(' ').slice(1).join(' '),
+          email: userData.email
+        }} 
+      />
     </DashboardShell>
   )
 }

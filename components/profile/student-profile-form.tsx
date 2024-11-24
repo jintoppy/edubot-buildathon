@@ -76,6 +76,11 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 interface ProfileFormProps {
   initialData?: any;
+  userData: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
 }
 
 export const ProfileForm = ({ initialData }: ProfileFormProps) => {
@@ -84,15 +89,22 @@ export const ProfileForm = ({ initialData }: ProfileFormProps) => {
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: initialData ? {
-      highestEducation: initialData.currentEducation,
-      englishTest: initialData.testScores?.english?.test || "",
-      englishScore: initialData.testScores?.english?.score || "",
-      otherTest: initialData.testScores?.other?.test || "",
-      otherScore: initialData.testScores?.other?.score || "",
-      workExperience: initialData.workExperience?.[0]?.description || "",
-      interests: initialData.extraCurricular?.[0]?.activity || "",
-    } : {
+    defaultValues: {
+      // User data always present
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      
+      // Profile data if it exists
+      highestEducation: initialData?.currentEducation || "",
+      englishTest: initialData?.testScores?.english?.test || "",
+      englishScore: initialData?.testScores?.english?.score || "",
+      otherTest: initialData?.testScores?.other?.test || "",
+      otherScore: initialData?.testScores?.other?.score || "",
+      workExperience: initialData?.workExperience?.[0]?.description || "",
+      interests: initialData?.extraCurricular?.[0]?.activity || "",
+      
+      // Other fields default to empty
       firstName: "",
       lastName: "",
       email: "",
@@ -206,7 +218,12 @@ export const ProfileForm = ({ initialData }: ProfileFormProps) => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="john.doe@example.com" {...field} />
+                    <Input 
+                      placeholder="john.doe@example.com" 
+                      {...field} 
+                      disabled 
+                      className="bg-muted"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
