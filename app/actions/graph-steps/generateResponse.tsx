@@ -38,7 +38,7 @@ export async function generateResponse(
 
       const response = await responseModel.invoke([
         new SystemMessage(`
-            Answer the query using this context. Be concise but informative. 
+            Answer the query using this context. Be concise but informative. Maximum 3 sentence.
             Format the response to be easily readable.
             Context: ${state.context?.generalInfo ? JSON.stringify(state.context.generalInfo): 'No Context available'}
           `),
