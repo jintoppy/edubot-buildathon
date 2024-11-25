@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { documentEmbeddings } from "@/lib/db/schema";
+import { documentation, documentEmbeddings } from "@/lib/db/schema";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
 // Initialize OpenAI client
@@ -134,7 +134,7 @@ export async function rankAndCombineResults(
       scoredResults.set(doc.metadata.documentId, {
         doc: {
           id: documentContent.id,
-          documentId: doc.documentId,
+          documentId: doc.metadata.documentId,
           title: documentContent.title,
           content: documentContent.content,
           category: documentContent.category,

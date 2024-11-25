@@ -3,33 +3,32 @@ import { ArrowRight, GraduationCap, Globe, Video, Brain } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { useUser } from '@clerk/clerk-react';
+import { useUser } from "@clerk/clerk-react";
 import { UserButton } from "@clerk/nextjs";
-import { db } from "@/lib/db";
-import { eq } from "drizzle-orm";
-import { users } from "@/lib/db/schema";
+import { getUserRole } from "@/app/actions/user";
 
 export default function Header() {
   const { isSignedIn, user } = useUser();
-  const [dashboardUrl, setDashboardUrl] = useState("/dashboard");
+  const [dashboardUrl, setDashboardUrl] = useState("");
 
   useEffect(() => {
-    const getUserRole = async () => {
-      if (!user?.id) return;
-      
-      const dbUser = await db.query.users.findFirst({
-        where: eq(users.clerkId, user.id),
-      });
+    const getDashboardUrl = async () => {
+      if (!user) {
+        return;
+      }
+      const userRole = await getUserRole(user?.id);
 
-      if (dbUser?.role === "admin") {
+      if (userRole === "admin") {
         setDashboardUrl("/admin");
-      } else if (dbUser?.role === "counselor") {
+      } else if (userRole === "counselor") {
         setDashboardUrl("/counselor");
+      } else {
+        setDashboardUrl("/dashboard");
       }
     };
 
     if (isSignedIn) {
-      getUserRole();
+      getDashboardUrl();
     }
   }, [isSignedIn, user?.id]);
   useEffect(() => {
@@ -60,7 +59,10 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 py-4 px-4 md:px-6 lg:px-8 border-b">
       <div className="container mx-auto flex justify-between items-center gap-8">
-        <Link href="/" className="flex gap-3 items-center text-2xl font-bold text-primary">
+        <Link
+          href="/"
+          className="flex gap-3 items-center text-2xl font-bold text-primary"
+        >
           <GraduationCap className="h-6 w-6" /> EduBot AI
         </Link>
         <nav className="hidden md:flex space-x-4">
@@ -83,7 +85,7 @@ export default function Header() {
             Testimonials
           </Link>
         </nav>
-        {isSignedIn ? (
+        {isSignedIn && dashboardUrl ? (
           <nav className="flex gap-4 sm:gap-6">
             <Link href={dashboardUrl}>
               <Button variant="ghost">Dashboard</Button>

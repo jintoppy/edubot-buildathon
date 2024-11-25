@@ -106,9 +106,9 @@ function serializeMessages(messages: (AIMessage | HumanMessage)[], sessionId: st
 async function chat(
   prevMessages: SerializedMessage[],
   message: string,
-  userId: string,
-  sessionId: string,
-  uiStream: any
+  userId: string,  
+  uiStream: any,
+  sessionId?: string,
 ) {
   return chatGraph
     .invoke(
@@ -131,6 +131,7 @@ async function chat(
     .then((result) => {
       return {
         messages: serializeMessages(result.messages, result.metadata.sessionId),
+        queryType: result.queryType
       };
     });
 }
@@ -170,7 +171,7 @@ export async function chatAction(
       content: input
     });
 
-    const resultPromise = chat(messages.map(msg => ({...msg, sessionId})), input, userId, sessionId, uiStream);
+    const resultPromise = chat(messages.map(msg => ({...msg, sessionId})), input, userId, uiStream, sessionId);
     
     // Handle AI response
     const result = await resultPromise;
@@ -187,10 +188,13 @@ export async function chatAction(
     // Add sessionId to messages for future reference
     const messagesWithSession = {
       ...result,
-      messages: result.messages.map(msg => ({
-        ...msg,
-        sessionId
-      }))
+      messages: result.messages.map(msg => {
+          return {
+            ...msg,
+            sessionId,
+            queryType: result.queryType
+          } 
+      })
     };
 
     return {

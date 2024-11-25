@@ -19,6 +19,7 @@ interface ExtendedMessage {
   createdAt?: Date;
   ui?: React.ReactNode;
   sessionId?: string;
+  queryType?: string;
 };
 
 type Props = {
@@ -113,6 +114,7 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
       };
       setMessages((prev) => [...prev, userMessage]);
       setInput("");
+      setServerUI(null);
 
       const loadingId = uuid();
       setMessages((prev) => [
@@ -154,7 +156,7 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
             ...filtered,
             {
               id: uuid(),
-              content: lastMessage.content,
+              content: lastMessage.queryType === 'GENERAL_QUESTION'? 'Details Below' : lastMessage.content,
               role: "assistant",
               createdAt: new Date(),
             },
