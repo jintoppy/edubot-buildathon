@@ -2,12 +2,36 @@
 import { ArrowRight, GraduationCap, Globe, Video, Brain } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from '@clerk/clerk-react';
 import { UserButton } from "@clerk/nextjs";
+import { db } from "@/lib/db";
+import { eq } from "drizzle-orm";
+import { users } from "@/lib/db/schema";
 
 export default function Header() {
-  const { isSignedIn } = useUser()
+  const { isSignedIn, user } = useUser();
+  const [dashboardUrl, setDashboardUrl] = useState("/dashboard");
+
+  useEffect(() => {
+    const getUserRole = async () => {
+      if (!user?.id) return;
+      
+      const dbUser = await db.query.users.findFirst({
+        where: eq(users.clerkId, user.id),
+      });
+
+      if (dbUser?.role === "admin") {
+        setDashboardUrl("/admin");
+      } else if (dbUser?.role === "counselor") {
+        setDashboardUrl("/counselor");
+      }
+    };
+
+    if (isSignedIn) {
+      getUserRole();
+    }
+  }, [isSignedIn, user?.id]);
   useEffect(() => {
     const handleScroll = (e: Event) => {
       e.preventDefault();
@@ -61,7 +85,7 @@ export default function Header() {
         </nav>
         {isSignedIn ? (
           <nav className="flex gap-4 sm:gap-6">
-            <Link href="/dashboard">
+            <Link href={dashboardUrl}>
               <Button variant="ghost">Dashboard</Button>
             </Link>
             <UserButton />
