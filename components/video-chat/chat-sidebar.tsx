@@ -187,7 +187,7 @@ export const ChatSidebar = forwardRef<ChatSidebarRef, Props>(({ onNewMessage }, 
     addMessage: (message: ExtendedMessage) => {
       setInput(message.content);
       handleSend(message.content);
-      // setMessages(prev => [...prev, message]);
+      // setMessages(prev => [...prev, message]); 
     }
   }));
 

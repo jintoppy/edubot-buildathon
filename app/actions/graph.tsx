@@ -107,6 +107,7 @@ async function chat(
   prevMessages: SerializedMessage[],
   message: string,
   userId: string,
+  sessionId: string,
   uiStream: any
 ) {
   return chatGraph
@@ -120,11 +121,11 @@ async function chat(
         uiStream,
         metadata: {
           userId,
-          sessionId: crypto.randomUUID(),
+          sessionId,
         },
       },
       {
-        configurable: { thread_id: userId },
+        configurable: { thread_id: sessionId },
       }
     )
     .then((result) => {
@@ -141,10 +142,10 @@ export async function chatAction(
 ) {
   try {
     const uiStream = createStreamableUI();
-    
+    const userMessages = messages.filter(msg => msg.role === 'user');
     // Create or get existing chat session
     let sessionId: string | undefined;
-    if (messages.length <= 1) { // Only system message present - new chat
+    if (userMessages.length <= 1) { // Only system message present - new chat
       const [session] = await db.insert(chatSessions).values({
         studentId: userId,
         communicationMode: "text_only",
@@ -152,6 +153,9 @@ export async function chatAction(
         startTime: new Date(),
         status: "active"
       }).returning({ id: chatSessions.id });
+      console.log('inserted');
+      console.log('sessionId', sessionId)
+      console.log(session);
       sessionId = session.id;
     } else {
       // Get the existing session ID from the first message
@@ -166,7 +170,7 @@ export async function chatAction(
       content: input
     });
 
-    const resultPromise = chat(messages.map(msg => ({...msg, sessionId})), input, userId, uiStream);
+    const resultPromise = chat(messages.map(msg => ({...msg, sessionId})), input, userId, sessionId, uiStream);
     
     // Handle AI response
     const result = await resultPromise;
